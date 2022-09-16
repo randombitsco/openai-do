@@ -1,0 +1,32 @@
+{
+  "pins" : [
+    {
+      "identity" : "multipartform",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/davbeck/MultipartForm",
+      "state" : {
+        "revision" : "c91979ea956a360bf84f0cc480afbcc7c946c753",
+        "version" : "0.1.0"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser.git",
+      "state" : {
+        "revision" : "9f39744e025c7d377987f30b03770805dcb0bcd1",
+        "version" : "1.1.4"
+      }
+    },
+    {
+      "identity" : "swift-openai-bits",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/randombitsco/swift-openai-bits",
+      "state" : {
+        "branch" : "main",
+        "revision" : "1a94e498600a0aac13ae00326d9e67c8b79f6d12"
+      }
+    }
+  ],
+  "version" : 2
+}
