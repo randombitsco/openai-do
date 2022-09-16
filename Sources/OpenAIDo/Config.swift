@@ -37,12 +37,12 @@ struct Config: ParsableArguments {
   
   /// The default format, given the config.
   func format() -> Format {
-    verbose ? .verbose() : .default
+    verbose ? .verbose : .default
   }
   
   mutating func validate() throws {
     guard findApiKey() != nil else {
-      throw ValidationError("Please provide an OpenAI API Key either via --api-key or the 'OPENAI_API_KEY' environment variable.")
+      throw ValidationError("Please provide an OpenAI API Key either via `--api-key` or the 'OPENAI_API_KEY' environment variable.")
     }
   }
 }

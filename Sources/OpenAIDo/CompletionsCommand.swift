@@ -8,7 +8,9 @@ struct CompletionsCommand: AsyncParsableCommand {
     abstract: "Creates a completion for the provided prompt and parameters."
   )
   
-  @Option(help: "The ID of the model to prompt. You can use `\(COMMAND_NAME) models list` to see all of your available models.")
+  @Option(help: """
+  The ID of the model to prompt. You can use `\(COMMAND_NAME) models list` to see all of your available models.
+  """)
   var modelId: Model.ID
   
   @Option(help: "The suffix that comes after a completion of inserted text.")

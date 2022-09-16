@@ -1,14 +1,12 @@
 import OpenAIBits
 
 struct Format {
-  static let `default` = Format(indent: "")
+  static let `default` = Format()
+
+  static let verbose = Format(showVerbose: true)
   
   static func indent(by count: Int) -> Format {
     Format(indent: String(repeating: " ", count: count))
-  }
-  
-  static func verbose() -> Format {
-    Format(showVerbose: true)
   }
   
   let indent: String
@@ -23,7 +21,7 @@ struct Format {
     Format(indent: indent.appending(String(repeating: " ", count: count)))
   }
   
-  func verbose() -> Format {
+  var verbose: Format {
     guard showVerbose else {
       return Format(indent: indent, showVerbose: true)
     }

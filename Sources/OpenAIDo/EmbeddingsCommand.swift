@@ -2,22 +2,35 @@ import ArgumentParser
 import Foundation
 import OpenAIBits
 
+/// MARK: embeddings
+
 struct EmbeddingsCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "embeddings",
-    abstract: "Runs an \"embeddings\" request, saving the results into a JSON file."
+    abstract: "Creates an embedding vector representing the input text, saving the results into a JSON file."
   )
   
-  @Option(help: "The model ID to use creating the embeddings.")
+  @Option(help: """
+  The model ID to use creating the embeddings. Should be a 'text-similarity',  'text-search', or 'code-search'
+  """)
   var modelId: Model.ID
 
-  @Option(help: "A unique identifier representing your end-user, which will help OpenAI to monitor and detect abuse.")
+  @Option(help: """
+  A unique identifier representing your end-user, which will help OpenAI to monitor and detect abuse.
+  """)
   var user: String?
 
-  @Option(help: "A filename to save the embedding into as a JSON file.", completion: .file(extensions: ["json"]))
+  @Option(
+    help: "A filename to save the embedding into as a JSON file.",
+    completion: .file(extensions: ["json"])
+  )
   var output: String
 
-  @Argument(help: "The text prompt to generate the embeddings.")
+  @Argument(help: """
+  Input text to get embeddings for. The input must not exceed 2048 tokens in length.
+
+  Unless you are embedding code, we suggest replacing newlines (`\n`) in your input with a single space, as we have observed inferior results when newlines are present.
+  """)
   var input: String
   
   @OptionGroup var config: Config

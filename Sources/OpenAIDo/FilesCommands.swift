@@ -2,10 +2,12 @@ import ArgumentParser
 import Foundation
 import OpenAIBits
 
+// MARK: files
+
 struct FilesCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "files",
-    abstract: "Commands relating to listing, uploading, and managing files.",
+    abstract: "Used to manage documents that can be used with features like `fine-tunes`.",
     subcommands: [
       FilesListCommand.self,
       FilesDetailCommand.self,
@@ -15,6 +17,8 @@ struct FilesCommand: AsyncParsableCommand {
     ]
   )
 }
+
+// MARK: list
 
 struct FilesListCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
@@ -34,16 +38,26 @@ struct FilesListCommand: AsyncParsableCommand {
   }
 }
 
+// MARK: upload
+
 struct FilesUploadCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "upload",
-    abstract: "Uploads a file with a specified purpose."
+    abstract: "Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. "
   )
   
-  @Option(name: .shortAndLong, help: "The file to upload.", completion: .file())
+  @Option(name: .shortAndLong, help: """
+  Name of the JSON Lines file to be uploaded.
+
+  If the purpose is set to 'fine-tune', each line is a JSON record with "prompt" and "completion" fields representing your training examples.
+  """, completion: .file())
   var input: String
   
-  @Option(name: .long, help: "The purpose for the file. Use 'fine-tune' for fine-tuning .jsonl files.")
+  @Option(name: .long, help: """
+  The intended purpose of the uploaded documents.
+
+  Use 'fine-tune' for Fine-tuning. This allows validation of the format of the uploaded file.
+  """)
   var purpose: Files.Upload.Purpose
   
   @OptionGroup var config: Config
@@ -60,10 +74,12 @@ struct FilesUploadCommand: AsyncParsableCommand {
   }
 }
 
+// MARK: detail
+
 struct FilesDetailCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "detail",
-    abstract: "Outputs details for a file with a specific ID."
+    abstract: "Returns information about a specific file."
   )
   
   @Option(name: [.customLong("id"), .long], help: "The file ID.")
@@ -80,16 +96,20 @@ struct FilesDetailCommand: AsyncParsableCommand {
   }
 }
 
+/// MARK: download
+
 struct FilesDownloadCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "download",
-    abstract: "Downloads a file with a specific ID."
+    abstract: "Returns the contents of the specified file."
   )
   
   @Option(name: [.customLong("id"), .long], help: "The file ID.")
   var fileId: File.ID
   
-  @Option(name: .shortAndLong, help: "The name of the output file. Outputs to stdout by default.", completion: .file())
+  @Option(name: .shortAndLong, help: """
+  The name of the output file. Outputs to stdout by default.
+  """, completion: .file())
   var output: String?
   
   @OptionGroup var config: Config
@@ -114,6 +134,8 @@ struct FilesDownloadCommand: AsyncParsableCommand {
     }
   }
 }
+
+// MARK: delete
 
 struct FilesDeleteCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
