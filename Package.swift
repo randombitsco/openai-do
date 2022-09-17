@@ -10,7 +10,7 @@ let package = Package(
     ],
     products: [
         .executable(name: "openai-do", targets: ["OpenAIDo"]),
-        .library(name: "OpenAIDo", targets: ["OpenAIDo"]),
+//        .library(name: "OpenAIDo", targets: ["OpenAIDo"]),
     ],
     dependencies: [
         .package(url: "https://github.com/randombitsco/swift-openai-bits", branch: "main"),

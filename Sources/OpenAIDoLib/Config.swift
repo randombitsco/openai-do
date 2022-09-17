@@ -4,6 +4,22 @@ import OpenAIBits
 
 
 struct Config: ParsableArguments {
+  /// A `func` value which attempts to find an OpenAI API Key from the environment.
+  /// By default, it pulls it from the `"OPENAI_API_KEY"` from the process environment.
+  /// It is used if no `apiKey` is provided directly into the ``Config``.
+  /// Override this provide an alternate default.
+  static var findApiKey: () -> String? = {
+    ProcessInfo.processInfo.environment["OPENAI_API_KEY"]
+  }
+  
+  /// A `func` value which attempts to find an OpenAI API Key from the environment.
+  /// By default, it pulls it from the `"OPENAI_ORG_KEY"` from the process environment.
+  /// It is used if no `orgKey` is provided directly into the ``Config``.
+  /// Override this provide an alternate default.
+  static var findOrgKey: () -> String? = {
+    ProcessInfo.processInfo.environment["OPENAI_ORG_KEY"]
+  }
+  
   @Option(help: "The OpenAI API Key. If not provided, uses the 'OPENAI_API_KEY' environment variable.")
   var apiKey: String?
   
@@ -17,11 +33,11 @@ struct Config: ParsableArguments {
   var debug: Bool = false
   
   func findApiKey() -> String? {
-    apiKey ?? ProcessInfo.processInfo.environment["OPENAI_API_KEY"]
+    apiKey ?? Config.findApiKey()
   }
   
   func findOrgKey() -> String? {
-    orgKey ?? ProcessInfo.processInfo.environment["OPENAI_ORG_KEY"]
+    orgKey ?? Config.findOrgKey()
   }
   
   var log: Client.Logger? {

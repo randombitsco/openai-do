@@ -6,11 +6,11 @@ import XCTest
 
 final class TokensCountCommandTests: XCTestCase {
   func testCount() throws {
-    let count = try parse(TokensCountCommand.self, [
+    let cmd = try parse(TokensCountCommand.self, [
       "tokens", "count", "Hello, world!"
     ])
     
-    XCTAssertEqual(count.text, "Hello, world!")
+    XCTAssertEqual(cmd.text, "Hello, world!")
   }
   
   func testCountWithBadInputFails() throws {
@@ -26,24 +26,24 @@ final class TokensCountCommandTests: XCTestCase {
 
 final class TokensDecodeCommandTests: XCTestCase {
   func testDecodeIntegers() throws {
-    let decode = try parse(TokensDecodeCommand.self, [
+    let cmd = try parse(TokensDecodeCommand.self, [
       "tokens", "decode", "15496", "11", "995", "0"
     ])
 
-    XCTAssertEqual(decode.input, ["15496", "11", "995", "0"])
-    XCTAssertEqual(decode.fromJson, false)
+    XCTAssertEqual(cmd.input, ["15496", "11", "995", "0"])
+    XCTAssertEqual(cmd.fromJson, false)
 
-    XCTAssertEqual(try decode.getTokens(), [15496, 11, 995, 0])
+    XCTAssertEqual(try cmd.getTokens(), [15496, 11, 995, 0])
   }
 
   func testDecodeFromJSON() throws {
-    let decode = try parse(TokensDecodeCommand.self, [
-      "tokens", "decode", "--from-json", #"["15496", "11", "995", "0"]"#
+    let cmd = try parse(TokensDecodeCommand.self, [
+      "tokens", "decode", "--from-json", "[15496, 11, 995, 0]"
     ])
 
-    XCTAssertEqual(decode.input, ["15496", "11", "995", "0"])
-    XCTAssertEqual(decode.fromJson, true)
+    XCTAssertEqual(cmd.input, ["[15496, 11, 995, 0]"])
+    XCTAssertEqual(cmd.fromJson, true)
 
-    XCTAssertEqual(try decode.getTokens(), [15496, 11, 995, 0])
+    XCTAssertEqual(try cmd.getTokens(), [15496, 11, 995, 0])
   }
 }

@@ -5,6 +5,10 @@ import XCTest
 // MARK: ModelsListCommand
 
 final class ModelsListCommandTests: XCTestCase {
+  override func setUpWithError() throws {
+    Config.findApiKey = { "XYZ" }
+  }
+  
   func testList() throws {
     let cmd = try parse(ModelsListCommand.self, [
       "models", "list"
@@ -14,7 +18,32 @@ final class ModelsListCommandTests: XCTestCase {
     XCTAssertEqual(cmd.code, false)
     XCTAssertEqual(cmd.embeddings, false)
     XCTAssertEqual(cmd.fineTuned, false)
-    XCTAssertIsNil(cmd.includes)
+    XCTAssertNil(cmd.includes)
+    
+    XCTAssertNil(cmd.config.apiKey)
+    XCTAssertEqual(cmd.config.findApiKey(), "XYZ")
+  }
+  
+  func testListWithApiKey() throws {
+    let cmd = try parse(ModelsListCommand.self, [
+      "models", "list", "--api-key", "ABC"
+    ])
+
+    XCTAssertEqual(cmd.edits, false)
+    XCTAssertEqual(cmd.code, false)
+    XCTAssertEqual(cmd.embeddings, false)
+    XCTAssertEqual(cmd.fineTuned, false)
+    XCTAssertNil(cmd.includes)
+    
+    XCTAssertEqual(cmd.config.apiKey, "ABC")
+    XCTAssertEqual(cmd.config.findApiKey(), "ABC")
+  }
+  
+  func testListWithNoApiKey() throws {
+    Config.findApiKey = { nil }
+    parseFail(ModelsListCommand.self, [
+      "models", "list"
+    ])
   }
 
   func testListFilters() throws {
@@ -26,7 +55,7 @@ final class ModelsListCommandTests: XCTestCase {
     XCTAssertEqual(cmd.code, true)
     XCTAssertEqual(cmd.embeddings, true)
     XCTAssertEqual(cmd.fineTuned, true)
-    XCTAssertIsNil(cmd.includes)
+    XCTAssertNil(cmd.includes)
   }
 
   func testListIncludes() throws {
@@ -38,16 +67,19 @@ final class ModelsListCommandTests: XCTestCase {
     XCTAssertEqual(cmd.code, false)
     XCTAssertEqual(cmd.embeddings, false)
     XCTAssertEqual(cmd.fineTuned, false)
-    XCTAssertEquals(cmd.includes, "foobar")
+    XCTAssertEqual(cmd.includes, "foobar")
   }
 
 }
 
-final class ModelsDetailCommandTests: XCTestCase {  
-  func testCountWithBadInputFails() throws {
-    let cmd = parse(
-      ModelsDetailCommand.self, [
-        "models", "detail", "--model-id,", "foobar"
+final class ModelsDetailCommandTests: XCTestCase {
+  override func setUpWithError() throws {
+    Config.findApiKey = { "XYZ" }
+  }
+
+  func testDetail() throws {
+    let cmd = try parse(ModelsDetailCommand.self, [
+        "models", "detail", "--model-id", "foobar"
       ]
     )
 
