@@ -2,7 +2,7 @@ import ArgumentParser
 import OpenAIDoLib
 
 @main
-struct MainCLI {
+enum MainCLI {
   static func main() async throws {
     await OpenAIDo.main()
   }
