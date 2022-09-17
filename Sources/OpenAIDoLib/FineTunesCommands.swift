@@ -1,6 +1,8 @@
 import ArgumentParser
 import OpenAIBits
 
+// MARK: fine-tunes
+
 struct FineTunesCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "fine-tunes",
@@ -16,6 +18,8 @@ struct FineTunesCommand: AsyncParsableCommand {
   )
 }
 
+// MARK: list
+
 struct FineTunesListCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "list",
@@ -29,10 +33,13 @@ struct FineTunesListCommand: AsyncParsableCommand {
     
     let result = try await client.call(FineTunes.List())
     
-    print(title: "Fine-Tunes", format: config.format())
-    print(list: result.data, label: "Fine-Tune", format: config.format(), with: print(fineTune:format:))
+    let format = config.format()
+    print(title: "Fine-Tunes", format: format)
+    print(list: result.data, label: "Fine-Tune", format: format, with: print(fineTune:format:))
   }
 }
+
+// MARK: create
 
 struct FineTunesCreateCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
@@ -42,7 +49,8 @@ struct FineTunesCreateCommand: AsyncParsableCommand {
   
   @Option(help: """
   The ID of an uploaded file that contains training data.
-  Your dataset must be formatted as a JSONL file, where each training example is a JSON object with the keys "prompt" and "completion". Additionally, you must upload your file with the purpose `fine-tune`.
+  
+  Your dataset must be formatted as a JSONL file, where each training example is a JSON object with the keys "prompt" and "completion". Additionally, you must upload your file with the purpose 'fine-tune'.
   """)
   public var trainingFile: File.ID
   
@@ -147,6 +155,8 @@ struct FineTunesCreateCommand: AsyncParsableCommand {
   }
 }
 
+// MARK: detail
+
 struct FineTunesDetailCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "detail",
@@ -168,6 +178,8 @@ struct FineTunesDetailCommand: AsyncParsableCommand {
     print(fineTune: result, format: format)
   }
 }
+
+// MARK: cancel
 
 struct FineTunesCancelCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
@@ -191,6 +203,8 @@ struct FineTunesCancelCommand: AsyncParsableCommand {
   }
 }
 
+// MARK: events
+
 struct FineTunesEventsCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "events",
@@ -212,6 +226,8 @@ struct FineTunesEventsCommand: AsyncParsableCommand {
     print(list: result.data, label: "Event", format: format, with: print(event:format:))
   }
 }
+
+// MARK: delete
 
 struct FineTunesDeleteCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(

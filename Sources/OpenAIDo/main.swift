@@ -1,0 +1,3 @@
+import OpenAIDoLib
+
+OpenAIDo.main()

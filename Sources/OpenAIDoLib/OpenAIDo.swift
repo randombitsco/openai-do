@@ -12,10 +12,9 @@ struct AppError: Error, CustomStringConvertible {
   }
 }
 
-@main
-struct OpenAIDo: AsyncParsableCommand {
+public struct OpenAIDo: AsyncParsableCommand {
   
-  static var configuration = CommandConfiguration(
+  public static var configuration = CommandConfiguration(
     commandName: COMMAND_NAME,
     abstract: "A utility for working with OpenAI APIs.",
     version: "0.9.0",
@@ -31,4 +30,6 @@ struct OpenAIDo: AsyncParsableCommand {
       TokensCommand.self,
     ]
   )
+  
+  public init() {}
 }

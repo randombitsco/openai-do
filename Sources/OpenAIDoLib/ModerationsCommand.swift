@@ -2,6 +2,8 @@ import Foundation
 import ArgumentParser
 import OpenAIBits
 
+// MARK: moderations
+
 struct ModerationsCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "moderations",
@@ -18,13 +20,14 @@ struct ModerationsCommand: AsyncParsableCommand {
 
   mutating func run() async throws {
     let client = config.client()
+    let format = config.format()
     
     let response = try await client.call(Moderations(
       input: .string(input),
       model: stable == true ? .stable : .latest
     ))
     
-    print(title: "Moderations", format: config.format())
-    print(moderationsResponse: response, format: config.format())
+    print(title: "Moderations", format: format)
+    print(moderationsResponse: response, format: format)
   }
 }

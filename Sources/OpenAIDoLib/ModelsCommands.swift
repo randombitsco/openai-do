@@ -2,10 +2,12 @@ import ArgumentParser
 import Foundation
 import OpenAIBits
 
+// MARK: models
+
 struct ModelsCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "models",
-    abstract: "Commands relating to available models.",
+    abstract: "Commands to list and describe the various models available.",
     subcommands: [
       ModelsListCommand.self,
       ModelsDetailCommand.self
@@ -13,19 +15,23 @@ struct ModelsCommand: AsyncParsableCommand {
   )
 }
 
+// MARK: list
+
 struct ModelsListCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "list",
-    abstract: "List available models."
+    abstract: """
+    Lists the currently available models, and provides basic information about each one, such as the owner and availability.
+    """
   )
   
-  @Flag(help: "If set, only models compatible with 'edits' calls will be listed.")
+  @Flag(help: "If set, only models compatible with `edits` calls will be listed.")
   var edits: Bool = false
   
   @Flag(help: "If set, only models compatible optimised for code generation will be listed.")
   var code: Bool = false
   
-  @Flag(name: [.long], help: "If set, only models compatible with generating embeddings calls will be listed.")
+  @Flag(name: [.long], help: "If set, only models compatible with `embeddings` calls will be listed.")
   var embeddings: Bool = false
   
   @Flag(help: "If set, only fine-tuned models will be listed.")
@@ -68,10 +74,14 @@ struct ModelsListCommand: AsyncParsableCommand {
   }
 }
 
+// MARK: detail
+
 struct ModelsDetailCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "detail",
-    abstract: "Outputs details for model with a specific ID."
+    abstract: """
+    Retrieves a model instance, providing basic information about the model such as the owner and permissioning.
+    """
   )
 
   @Option(help: "The model ID.")
@@ -81,7 +91,9 @@ struct ModelsDetailCommand: AsyncParsableCommand {
   
   mutating func run() async throws {
     let client = config.client()
-
-    try await print(model: client.call(Models.Details(for: modelId)), format: config.format())
+    let format = config.format()
+    
+    print(title: "Model Detail", format: format)
+    try await print(model: client.call(Models.Details(for: modelId)), format: format)
   }
 }

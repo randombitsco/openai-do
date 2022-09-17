@@ -9,7 +9,8 @@ let package = Package(
       .macOS(.v12),
     ],
     products: [
-        .executable(name: "openai-do", targets: ["OpenAIDo"])
+        .executable(name: "openai-do", targets: ["OpenAIDo"]),
+        .library(name: "OpenAIDo", targets: ["OpenAIDo"]),
     ],
     dependencies: [
         .package(url: "https://github.com/randombitsco/swift-openai-bits", branch: "main"),
@@ -21,8 +22,19 @@ let package = Package(
         .executableTarget(
             name: "OpenAIDo",
             dependencies: [
-              .product(name: "OpenAIBits", package: "swift-openai-bits"),
-              .product(name: "ArgumentParser", package: "swift-argument-parser"),
+              "OpenAIDoLib",
             ]),
+        .target(
+          name: "OpenAIDoLib",
+          dependencies: [
+            .product(name: "OpenAIBits", package: "swift-openai-bits"),
+            .product(name: "ArgumentParser", package: "swift-argument-parser"),
+          ]),
+        .testTarget(
+          name: "OpenAIDoTests",
+          dependencies: [
+            "OpenAIDoLib",
+          ]
+        ),
     ]
 )

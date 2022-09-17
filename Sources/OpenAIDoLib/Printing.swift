@@ -1,5 +1,7 @@
 import OpenAIBits
 
+// MARK: Format
+
 struct Format {
   static let `default` = Format()
 
@@ -37,8 +39,12 @@ func indent(by: Int) -> String {
   String(repeating: " ", count: by)
 }
 
+// MARK: Printer
+
 /// A `Printer` will take a `value` and a ``Format`` and print it with that format.
 typealias Printer<T> = (_ value: T, _ format: Format) -> Void
+
+// MARK: General Print Functions
 
 /// Prints a line of text with the specified ``Format``.
 ///
@@ -125,18 +131,17 @@ func print<T: CustomStringConvertible>(label: String, value: T?, verbose: Bool =
   }
 }
 
-// ===============================================
-// Printers for specific types.
-// ===============================================
+// MARK: Printers for specific types.
 
-func print(file: File, format: Format) {
-  print(label: "ID", value: file.id, format: format)
-  print(label: "Filename", value: file.filename, format: format)
-  print(label: "Purpose", value: file.purpose, format: format)
-  print(label: "Bytes", value: file.bytes, format: format)
-  print(label: "Status", value: file.status, format: format)
-  print(label: "Status Details", value: file.statusDetails, format: format)
-  print(label: "Created At", value: file.createdAt, format: format)
+func print(choice: Completions.Choice, format: Format) {
+  let border = String(repeating: "~", count: 40)
+  
+  print(label: "Logprobs", value: choice.logprobs, verbose: true, format: format)
+  print(label: "Finish Reason", value: choice.finishReason, format: format)
+  
+  print(text: border, format: format)
+  print(choice.text)
+  print(text: border, format: format)
 }
 
 func print(completion: Completions.Response, format: Format) {
@@ -150,33 +155,20 @@ func print(completion: Completions.Response, format: Format) {
   print(usage: completion.usage, format: format)
 }
 
-func print(choice: Completions.Choice, format: Format) {
-  let border = String(repeating: "~", count: 40)
-  
-  print(label: "Logprobs", value: choice.logprobs, verbose: true, format: format)
-  print(label: "Finish Reason", value: choice.finishReason, format: format)
-  
-  print(text: border, format: format)
-  print(choice.text)
-  print(text: border, format: format)
+func print(event: FineTune.Event, format: Format) {
+  print(label: "Created At", value: event.createdAt, format: format)
+  print(label: "Level", value: event.level, format: format)
+  print(label: "Message", value: event.level, format: format)
 }
 
-func print(usage: Usage?, format: Format) {
-  guard let usage = usage else { return }
-  print("")
-  print(label: "Tokens Used", value: "Prompt: \(usage.promptTokens); Completion: \(usage.completionTokens ?? 0); Total: \(usage.totalTokens)", format: format)
-}
-
-func print(model: Model, format: Format) {
-  print(label: "ID", value: model.id, format: format)
-  print(label: "Created", value: model.created, format: format)
-  print(label: "Owned By", value: model.ownedBy, format: format)
-  print(label: "Fine-Tune", value: model.isFineTune ? "yes" : "no", format: format)
-  print(label: "Root Model", value: model.root, verbose: true, format: format)
-  print(label: "Parent Model", value: model.parent, verbose: true, format: format)
-  print(label: "Supports Code", value: model.supportsCode, verbose: true, format: format)
-  print(label: "Supports Edit", value: model.supportsEdit, verbose: true, format: format)
-  print(label: "Supports Embedding", value: model.supportsEmbedding, verbose: true, format: format)
+func print(file: File, format: Format) {
+  print(label: "ID", value: file.id, format: format)
+  print(label: "Filename", value: file.filename, format: format)
+  print(label: "Purpose", value: file.purpose, format: format)
+  print(label: "Bytes", value: file.bytes, format: format)
+  print(label: "Status", value: file.status, format: format)
+  print(label: "Status Details", value: file.statusDetails, format: format)
+  print(label: "Created At", value: file.createdAt, format: format)
 }
 
 func print(fineTune: FineTune, format: Format) {
@@ -225,10 +217,16 @@ func print(fineTune: FineTune, format: Format) {
   }
 }
 
-func print(event: FineTune.Event, format: Format) {
-  print(label: "Created At", value: event.createdAt, format: format)
-  print(label: "Level", value: event.level, format: format)
-  print(label: "Message", value: event.level, format: format)
+func print(model: Model, format: Format) {
+  print(label: "ID", value: model.id, format: format)
+  print(label: "Created", value: model.created, format: format)
+  print(label: "Owned By", value: model.ownedBy, format: format)
+  print(label: "Fine-Tune", value: model.isFineTune ? "yes" : "no", format: format)
+  print(label: "Root Model", value: model.root, verbose: true, format: format)
+  print(label: "Parent Model", value: model.parent, verbose: true, format: format)
+  print(label: "Supports Code", value: model.supportsCode, verbose: true, format: format)
+  print(label: "Supports Edit", value: model.supportsEdit, verbose: true, format: format)
+  print(label: "Supports Embedding", value: model.supportsEmbedding, verbose: true, format: format)
 }
 
 func print(moderationsResponse response: Moderations.Response, format: Format) {
@@ -249,3 +247,8 @@ func print(moderationsResponse response: Moderations.Response, format: Format) {
   }
 }
 
+func print(usage: Usage?, format: Format) {
+  guard let usage = usage else { return }
+  print("")
+  print(label: "Tokens Used", value: "Prompt: \(usage.promptTokens); Completion: \(usage.completionTokens ?? 0); Total: \(usage.totalTokens)", format: format)
+}

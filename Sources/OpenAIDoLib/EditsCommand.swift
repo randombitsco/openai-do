@@ -52,7 +52,7 @@ struct EditsCommand: AsyncParsableCommand {
     let client = config.client()
     
     let edits = Edits(
-      model: try findModelID(),
+      model: modelId.modelId,
       input: input,
       instruction: instruction,
       n: n,
@@ -96,7 +96,7 @@ extension EditsCommand {
       case .codex:
         return "edits-davinci-codex-002"
       case .id(let id):
-        return .init(value: id)
+        return .init(id)
       }
     }
   }
