@@ -8,6 +8,6 @@ func parse<A>(_ type: A.Type, _ arguments: [String], file: StaticString = #fileP
   return try XCTUnwrap(result, file: file, line: line)
 }
 
-func parseFail<A>(_ type: A.Type, _ arguments: [String], file: StaticString = #filePath, line: UInt = #line) throws {
+func parseFail<A>(_ type: A.Type, _ arguments: [String], file: StaticString = #filePath, line: UInt = #line) {
   XCTAssertThrowsError(try OpenAIDo.parseAsRoot(arguments) as? A, file: file, line: line)
 }

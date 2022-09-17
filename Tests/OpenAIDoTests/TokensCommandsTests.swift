@@ -14,7 +14,7 @@ final class TokensCountCommandTests: XCTestCase {
   }
   
   func testCountWithBadInputFails() throws {
-    try parseFail(
+    parseFail(
       TokensCountCommand.self, [
         "tokens", "count", "Hello,", "world!"
       ]
@@ -32,6 +32,17 @@ final class TokensDecodeCommandTests: XCTestCase {
 
     XCTAssertEqual(decode.input, ["15496", "11", "995", "0"])
     XCTAssertEqual(decode.fromJson, false)
+
+    XCTAssertEqual(try decode.getTokens(), [15496, 11, 995, 0])
+  }
+
+  func testDecodeFromJSON() throws {
+    let decode = try parse(TokensDecodeCommand.self, [
+      "tokens", "decode", "--from-json", #"["15496", "11", "995", "0"]"#
+    ])
+
+    XCTAssertEqual(decode.input, ["15496", "11", "995", "0"])
+    XCTAssertEqual(decode.fromJson, true)
 
     XCTAssertEqual(try decode.getTokens(), [15496, 11, 995, 0])
   }
