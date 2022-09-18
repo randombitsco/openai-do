@@ -30,11 +30,12 @@ struct FilesListCommand: AsyncParsableCommand {
   
   mutating func run() async throws {
     let client = config.client()
+    let format = config.format()
     
     let files = try await client.call(Files.List())
         
-    print(title: "Files:", format: config.format())
-    print(list: files.data.sorted(by: { $0.id.value < $1.id.value }), format: config.format(), with: print(file:format:))
+    format.print(title: "Files:")
+    format.print(list: files.data.sorted(by: { $0.id.value < $1.id.value }), with: print(file:format:))
   }
 }
 
@@ -64,13 +65,14 @@ struct FilesUploadCommand: AsyncParsableCommand {
   
   mutating func run() async throws {
     let client = config.client()
+    let format = config.format()
     
     let fileURL = URL(fileURLWithPath: input)
     
     let result = try await client.call(Files.Upload(purpose: purpose, file: fileURL))
     
-    print(title: "File Detail", format: config.format())
-    print(file: result, format: config.format())
+    format.print(title: "File Detail")
+    print(file: result, format: format)
   }
 }
 
@@ -89,10 +91,12 @@ struct FilesDetailCommand: AsyncParsableCommand {
   
   mutating func run() async throws {
     let client = config.client()
+    let format = config.format()
 
     let file = try await client.call(Files.Details(id: fileId))
-    print(title: "File Detail", format: config.format())
-    print(file: file, format: config.format())
+    
+    format.print(title: "File Detail")
+    print(file: file, format: format)
   }
 }
 
@@ -116,20 +120,21 @@ struct FilesDownloadCommand: AsyncParsableCommand {
   
   mutating func run() async throws {
     let client = config.client()
+    let format = config.format()
     
     let result = try await client.call(Files.Content(id: fileId))
     
     if let output = output {
       let outputURL = URL(fileURLWithPath: output)
       try result.data.write(to: outputURL)
-      print(label: "File Saved:", value: output, format: config.format())
+      format.print(label: "File Saved:", value: output)
     } else {
-      print(label: "File Name", value: result.filename, format: config.format())
+      format.print(label: "File Name", value: result.filename)
       let outputString = String(data: result.data, encoding: .utf8)
       guard let outputString = outputString else {
         throw AppError("Unable to decode data file as UTF-8: \(fileId)")
       }
-      print(subtitle: "File Content:", format: config.format())
+      format.print(subtitle: "File Content:")
       print(outputString)
     }
   }
@@ -150,10 +155,11 @@ struct FilesDeleteCommand: AsyncParsableCommand {
   
   mutating func run() async throws {
     let client = config.client()
+    let format = config.format()
     
     let result = try await client.call(Files.Delete(id: fileId))
     
-    print(label: "File ID", value: result.id, format: config.format())
-    print(label: "Deleted", value: result.deleted ? "yes" : "no", format: config.format())
+    format.print(label: "File ID", value: result.id)
+    format.print(label: "Deleted", value: result.deleted ? "yes" : "no")
   }
 }

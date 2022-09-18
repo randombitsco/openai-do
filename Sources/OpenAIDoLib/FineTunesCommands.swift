@@ -30,12 +30,12 @@ struct FineTunesListCommand: AsyncParsableCommand {
   
   mutating func run() async throws {
     let client = config.client()
+    let format = config.format()
     
     let result = try await client.call(FineTunes.List())
     
-    let format = config.format()
-    print(title: "Fine-Tunes", format: format)
-    print(list: result.data, label: "Fine-Tune", format: format, with: print(fineTune:format:))
+    format.print(title: "Fine-Tunes")
+    format.print(list: result.data, label: "Fine-Tune", with: print(fineTune:format:))
   }
 }
 
@@ -137,6 +137,7 @@ struct FineTunesCreateCommand: AsyncParsableCommand {
 
   mutating func run() async throws {
     let client = config.client()
+    let format = config.format()
     
     let results = try await client.call(FineTunes.Create(
       trainingFile: trainingFile, validationFile: validationFile,
@@ -149,8 +150,7 @@ struct FineTunesCreateCommand: AsyncParsableCommand {
       suffix: suffix
     ))
     
-    let format = config.format()
-    print(title: "Fine-Tune Created", format: format)
+    format.print(title: "Fine-Tune Created")
     print(fineTune: results, format: format)
   }
 }
@@ -170,11 +170,11 @@ struct FineTunesDetailCommand: AsyncParsableCommand {
   
   mutating func run() async throws {
     let client = config.client()
+    let format = config.format()
     
     let result = try await client.call(FineTunes.Details(id: fineTuneId))
     
-    let format = config.format()
-    print(title: "Fine-Tune Detail", format: format)
+    format.print(title: "Fine-Tune Detail")
     print(fineTune: result, format: format)
   }
 }
@@ -198,7 +198,7 @@ struct FineTunesCancelCommand: AsyncParsableCommand {
     let result = try await client.call(FineTunes.Cancel(id: fineTuneId))
     
     let format = config.format()
-    print(title: "Fine-Tune Cancelled", format: format)
+    format.print(title: "Fine-Tune Cancelled")
     print(fineTune: result, format: format)
   }
 }
@@ -222,8 +222,8 @@ struct FineTunesEventsCommand: AsyncParsableCommand {
     let result = try await client.call(FineTunes.Events(id: fineTuneId))
     
     let format = config.format()
-    print(title: "Fine-Tune Events", format: format)
-    print(list: result.data, label: "Event", format: format, with: print(event:format:))
+    format.print(title: "Fine-Tune Events")
+    format.print(list: result.data, label: "Event", with: print(event:format:))
   }
 }
 
@@ -246,8 +246,8 @@ struct FineTunesDeleteCommand: AsyncParsableCommand {
     let result = try await client.call(FineTunes.Delete(id: modelId))
     
     let format = config.format()
-    print(title: "Fine-Tune Deleted", format: format)
-    print(label: "ID", value: result.id, format: format)
-    print(label: "Deleted", value: result.deleted ? "yes" : "no", format: format)
+    format.print(title: "Fine-Tune Deleted")
+    format.print(label: "ID", value: result.id)
+    format.print(label: "Deleted", value: result.deleted ? "yes" : "no")
   }
 }

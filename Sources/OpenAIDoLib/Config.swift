@@ -2,23 +2,28 @@ import ArgumentParser
 import Foundation
 import OpenAIBits
 
-
 struct Config: ParsableArguments {
+  /// Attempts to find the OpenAI API Key from the `"OPENAI_API_KEY"` environment variable.
+  static func findApiKeyInEnvironment() -> String? {
+    ProcessInfo.processInfo.environment["OPENAI_API_KEY"]
+  }
+
+  /// Attempts to find the OpenAI Org Key from the `"OPENAI_ORG_KEY"` environment variable.
+  static func findOrgKeyInEnvironment() -> String? {
+    ProcessInfo.processInfo.environment["OPENAI_ORG_KEY"]
+  }
+  
   /// A `func` value which attempts to find an OpenAI API Key from the environment.
   /// By default, it pulls it from the `"OPENAI_API_KEY"` from the process environment.
   /// It is used if no `apiKey` is provided directly into the ``Config``.
   /// Override this provide an alternate default.
-  static var findApiKey: () -> String? = {
-    ProcessInfo.processInfo.environment["OPENAI_API_KEY"]
-  }
+  static var findApiKey: () -> String? = Config.findApiKeyInEnvironment
   
   /// A `func` value which attempts to find an OpenAI API Key from the environment.
   /// By default, it pulls it from the `"OPENAI_ORG_KEY"` from the process environment.
   /// It is used if no `orgKey` is provided directly into the ``Config``.
   /// Override this provide an alternate default.
-  static var findOrgKey: () -> String? = {
-    ProcessInfo.processInfo.environment["OPENAI_ORG_KEY"]
-  }
+  static var findOrgKey: () -> String? = Config.findOrgKeyInEnvironment
   
   @Option(help: "The OpenAI API Key. If not provided, uses the 'OPENAI_API_KEY' environment variable.")
   var apiKey: String?

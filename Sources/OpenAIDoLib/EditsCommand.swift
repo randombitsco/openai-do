@@ -50,6 +50,7 @@ struct EditsCommand: AsyncParsableCommand {
   
   mutating func run() async throws {
     let client = config.client()
+    let format = config.format()
     
     let edits = Edits(
       model: modelId.modelId,
@@ -62,7 +63,7 @@ struct EditsCommand: AsyncParsableCommand {
     
     let result = try await client.call(edits)
     
-    print(title: "Edits", format: config.format())
+    format.print(title: "Edits")
     for choice in result.choices {
       print("\(choice.index): \"\(choice.text)\"\n")
     }

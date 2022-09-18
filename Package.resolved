@@ -1,32 +1,52 @@
 {
-  "pins" : [
-    {
-      "identity" : "multipartform",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/davbeck/MultipartForm",
-      "state" : {
-        "revision" : "c91979ea956a360bf84f0cc480afbcc7c946c753",
-        "version" : "0.1.0"
+  "object": {
+    "pins": [
+      {
+        "package": "MultipartForm",
+        "repositoryURL": "https://github.com/davbeck/MultipartForm",
+        "state": {
+          "branch": null,
+          "revision": "c91979ea956a360bf84f0cc480afbcc7c946c753",
+          "version": "0.1.0"
+        }
+      },
+      {
+        "package": "swift-argument-parser",
+        "repositoryURL": "https://github.com/apple/swift-argument-parser.git",
+        "state": {
+          "branch": null,
+          "revision": "9f39744e025c7d377987f30b03770805dcb0bcd1",
+          "version": "1.1.4"
+        }
+      },
+      {
+        "package": "swift-custom-dump",
+        "repositoryURL": "https://github.com/pointfreeco/swift-custom-dump",
+        "state": {
+          "branch": null,
+          "revision": "c9b6b940d95c0a925c63f6858943415714d8a981",
+          "version": "0.5.2"
+        }
+      },
+      {
+        "package": "swift-openai-bits",
+        "repositoryURL": "https://github.com/randombitsco/swift-openai-bits",
+        "state": {
+          "branch": "main",
+          "revision": "1a94e498600a0aac13ae00326d9e67c8b79f6d12",
+          "version": null
+        }
+      },
+      {
+        "package": "xctest-dynamic-overlay",
+        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
+        "state": {
+          "branch": null,
+          "revision": "30314f1ece684dd60679d598a9b89107557b67d9",
+          "version": "0.4.1"
+        }
       }
-    },
-    {
-      "identity" : "swift-argument-parser",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-argument-parser.git",
-      "state" : {
-        "revision" : "9f39744e025c7d377987f30b03770805dcb0bcd1",
-        "version" : "1.1.4"
-      }
-    },
-    {
-      "identity" : "swift-openai-bits",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/randombitsco/swift-openai-bits",
-      "state" : {
-        "branch" : "main",
-        "revision" : "1a94e498600a0aac13ae00326d9e67c8b79f6d12"
-      }
-    }
-  ],
-  "version" : 2
+    ]
+  },
+  "version": 1
 }

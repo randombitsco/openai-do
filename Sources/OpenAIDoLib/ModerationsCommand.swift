@@ -27,7 +27,7 @@ struct ModerationsCommand: AsyncParsableCommand {
       model: stable == true ? .stable : .latest
     ))
     
-    print(title: "Moderations", format: format)
+    format.print(title: "Moderations")
     print(moderationsResponse: response, format: format)
   }
 }

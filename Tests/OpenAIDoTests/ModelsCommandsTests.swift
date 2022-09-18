@@ -10,9 +10,7 @@ final class ModelsListCommandTests: XCTestCase {
   }
   
   func testList() throws {
-    let cmd = try parse(ModelsListCommand.self, [
-      "models", "list"
-    ])
+    let cmd: ModelsListCommand = try parse("models", "list")
 
     XCTAssertEqual(cmd.edits, false)
     XCTAssertEqual(cmd.code, false)
@@ -25,9 +23,9 @@ final class ModelsListCommandTests: XCTestCase {
   }
   
   func testListWithApiKey() throws {
-    let cmd = try parse(ModelsListCommand.self, [
+    let cmd: ModelsListCommand = try parse(
       "models", "list", "--api-key", "ABC"
-    ])
+    )
 
     XCTAssertEqual(cmd.edits, false)
     XCTAssertEqual(cmd.code, false)
@@ -41,15 +39,13 @@ final class ModelsListCommandTests: XCTestCase {
   
   func testListWithNoApiKey() throws {
     Config.findApiKey = { nil }
-    parseFail(ModelsListCommand.self, [
-      "models", "list"
-    ])
+    parseFail("models", "list", as: ModelsListCommand.self)
   }
 
   func testListFilters() throws {
-    let cmd = try parse(ModelsListCommand.self, [
+    let cmd: ModelsListCommand = try parse(
       "models", "list", "--edits", "--code", "--embeddings", "--fine-tuned"
-    ])
+    )
 
     XCTAssertEqual(cmd.edits, true)
     XCTAssertEqual(cmd.code, true)
@@ -59,9 +55,9 @@ final class ModelsListCommandTests: XCTestCase {
   }
 
   func testListIncludes() throws {
-    let cmd = try parse(ModelsListCommand.self, [
+    let cmd: ModelsListCommand = try parse(
       "models", "list", "--includes", "foobar"
-    ])
+    )
 
     XCTAssertEqual(cmd.edits, false)
     XCTAssertEqual(cmd.code, false)
@@ -78,9 +74,8 @@ final class ModelsDetailCommandTests: XCTestCase {
   }
 
   func testDetail() throws {
-    let cmd = try parse(ModelsDetailCommand.self, [
-        "models", "detail", "--model-id", "foobar"
-      ]
+    let cmd: ModelsDetailCommand = try parse(
+      "models", "detail", "--model-id", "foobar"
     )
 
     XCTAssertEqual(cmd.modelId, .init("foobar"))

@@ -32,9 +32,11 @@ struct TokensCountCommand: AsyncParsableCommand {
     let encoder = try TokenEncoder()
     let count = try encoder.encode(text: text).count
     
-    print(title: "Token Count", format: .default)
-    print("")
-    print(label: "Count", value: count, format: .default)
+    let format = Format.default
+    
+    format.print(title: "Token Count")
+    format.println()
+    format.print(label: "Count", value: count)
   }
 }
 
@@ -62,11 +64,11 @@ struct TokensEncodeCommand: AsyncParsableCommand {
   mutating func run() async throws {
     let encoder = try TokenEncoder()
     let tokens = try encoder.encode(text: text)
-    
-    print(title: "Token Encoding", format: format)
-    print("")
-    print(label: "Tokens", value: tokens, format: format)
-    print(label: "Count", value: tokens.count, verbose: true, format: format)
+
+    format.print(title: "Token Encoding")
+    format.println()
+    format.print(label: "Tokens", value: tokens)
+    format.print(label: "Count", value: tokens.count, verbose: true)
   }
 }
 
@@ -152,8 +154,8 @@ struct TokensDecodeCommand: AsyncParsableCommand {
     let tokens = try getTokens()
     let text = try encoder.decode(tokens: tokens)
     
-    print(title: "Token Decoding", format: format)
-    print("")
-    print(label: "Text", value: text, format: format)
+    format.print(title: "Token Decoding")
+    format.println()
+    format.print(label: "Text", value: text)
   }
 }

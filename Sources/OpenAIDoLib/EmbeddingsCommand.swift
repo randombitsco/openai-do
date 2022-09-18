@@ -37,6 +37,7 @@ struct EmbeddingsCommand: AsyncParsableCommand {
 
   mutating func run() async throws {
     let client = config.client()
+    let format = config.format()
 
     let result = try await client.call(Embeddings(
       model: modelId, 
@@ -44,14 +45,13 @@ struct EmbeddingsCommand: AsyncParsableCommand {
       user: user
     ))
 
-    print(title: "Embeddings", format: config.format())
+    format.print(title: "Embeddings")
 
     print(usage: result.usage, format: config.format())
     
     let outputURL = URL(fileURLWithPath: output)
     let jsonData = try JSONEncoder().encode(result.data)
     try jsonData.write(to: outputURL)
-    print(label: "JSON File Saved:", value: output, format: config.format())
-
+    format.print(label: "JSON File Saved:", value: output)
   }
 }

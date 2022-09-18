@@ -15,6 +15,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/randombitsco/swift-openai-bits", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.1.0"),
+        .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "0.5.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -34,6 +35,7 @@ let package = Package(
           name: "OpenAIDoTests",
           dependencies: [
             "OpenAIDoLib",
+            .product(name: "CustomDump", package: "swift-custom-dump"),
           ]
         ),
     ]

@@ -93,7 +93,7 @@ struct ModelsDetailCommand: AsyncParsableCommand {
     let client = config.client()
     let format = config.format()
     
-    print(title: "Model Detail", format: format)
+    format.print(title: "Model Detail")
     try await print(model: client.call(Models.Details(for: modelId)), format: format)
   }
 }
