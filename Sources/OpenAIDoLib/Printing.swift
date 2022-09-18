@@ -1,8 +1,14 @@
 import OpenAIBits
 
+// MARK: Printer
+
+/// A `Printer` will take a `value` and a ``Format`` and print it with that format.
+typealias Printer<T> = (_ value: T, _ format: Format) -> Void
+
 // MARK: Format
 
 struct Format {
+  
   /// The base function called to print text. It will print whatever is provided, with no terminator.
   /// The default implementation calls ``Swift.print(_:separator:terminator)``.
   ///
@@ -11,58 +17,52 @@ struct Format {
     Swift.print(String(describing: $0), terminator: "")
   }
   
+  /// The basic ``Format``, no indentation, not verbose.
   static let `default` = Format()
 
+  /// A ``Format`` which is verbose by default.
   static let verbose = Format(showVerbose: true)
   
+  /// Returns a new ``Format`` with an `indent` of the specified number of spaces.
+  ///
+  /// - Parameter count: The number of spaces to indent by.
+  /// - Returns a new ``Format`` with additional indentation.
   static func indent(by count: Int) -> Format {
     Format(indent: String(repeating: " ", count: count))
   }
   
+  /// The current indentation ``String``.
   let indent: String
+  
+  /// If true, verbose values will be output.
   let showVerbose: Bool
   
+  /// Creates a new ``Format``.
+  ///
+  /// - Parameter indent: The indent ``String``.
   init(indent: String = "", showVerbose: Bool = false) {
     self.indent = indent
     self.showVerbose = showVerbose
   }
   
+  /// Creates a new ``Format`` with the indentation increased by the specified `count`.
+  ///
+  /// - Parameter count: the number of spaces to increase the increment by.
+  /// - Returns the new ``Format`` with the indentation increased.
   func indent(by count: Int) -> Format {
     Format(indent: indent.appending(String(repeating: " ", count: count)))
   }
   
+  /// A ``Format`` with the same settings, where ``showVerbose`` is `true`.
   var verbose: Format {
     guard showVerbose else {
       return Format(indent: indent, showVerbose: true)
     }
     return self
   }
-}
 
-/// Creates an indent ``String`` of the specified length.
-///
-/// - Parameter by: The number of characters to indent by.
-/// - Returns the indent ``String``.
-func indent(by: Int) -> String {
-  String(repeating: " ", count: by)
-}
-
-// MARK: Printer
-
-/// A `Printer` will take a `value` and a ``Format`` and print it with that format.
-typealias Printer<T> = (_ value: T, _ format: Format) -> Void
-
-// MARK: General Print Functions
-
-/// Prints a line of text with the specified ``Format``.
-///
-/// - Parameter text: The text to print.
-/// - Parameter format: The ``Format`` to print with.
-func print(text: CustomStringConvertible, format: Format) {
-  Format.print("\(format.indent)\(text)\n")
-}
-
-extension Format {
+  // MARK: General Print Functions
+  
   /// Prints a line of text with the specified ``Format``.
   ///
   /// - Parameter text: The text to print.
@@ -157,9 +157,9 @@ func print(choice: Completions.Choice, format: Format) {
   format.print(label: "Logprobs", value: choice.logprobs, verbose: true)
   format.print(label: "Finish Reason", value: choice.finishReason)
   
-  print(text: border, format: format)
+  format.print(text: border)
   print(choice.text)
-  print(text: border, format: format)
+  format.print(text: border)
 }
 
 func print(completion: Completions.Response, format: Format) {
@@ -170,7 +170,7 @@ func print(completion: Completions.Response, format: Format) {
   format.println()
   format.print(list: completion.choices, label: "Choice", with: print(choice:format:))
   
-  print(usage: completion.usage, format: format)
+  format.print(usage: completion.usage)
 }
 
 func print(event: FineTune.Event, format: Format) {
@@ -251,7 +251,7 @@ func print(model: Model, format: Format) {
 func print(moderationsResponse response: Moderations.Response, format: Format) {
   let maxCategoryName = Moderations.Category.allCases.map { $0.rawValue.count }.max() ?? 0
   for (i, result) in response.results.enumerated() {
-    print(text: "#\(i+1): \(result.flagged ? "FLAGGED" : "Unflagged") ", format: format)
+    format.print(text: "#\(i+1): \(result.flagged ? "FLAGGED" : "Unflagged") ")
     for category in Moderations.Category.allCases {
       var output = "N/A"
       if let flagged = result.categories[category] {
@@ -261,13 +261,15 @@ func print(moderationsResponse response: Moderations.Response, format: Format) {
         output += " (\(score))"
       }
       let categoryName = "\(category):".padding(toLength: maxCategoryName+1, withPad: " ", startingAt: 0)
-      print(text: "\(categoryName) \(output)", format: format)
+      format.print(text: "\(categoryName) \(output)")
     }
   }
 }
 
-func print(usage: Usage?, format: Format) {
-  guard let usage = usage else { return }
-  format.println()
-  format.print(label: "Tokens Used", value: "Prompt: \(usage.promptTokens); Completion: \(usage.completionTokens ?? 0); Total: \(usage.totalTokens)")
+extension Format {
+  func print(usage: Usage?) {
+    guard let usage = usage else { return }
+    println()
+    print(label: "Tokens Used", value: "Prompt: \(usage.promptTokens); Completion: \(usage.completionTokens ?? 0); Total: \(usage.totalTokens)")
+  }
 }

@@ -68,7 +68,7 @@ struct EditsCommand: AsyncParsableCommand {
       print("\(choice.index): \"\(choice.text)\"\n")
     }
     
-    print(usage: result.usage, format: config.format())
+    format.print(usage: result.usage)
   }
 }
 

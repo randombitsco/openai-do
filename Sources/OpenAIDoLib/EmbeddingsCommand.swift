@@ -45,13 +45,12 @@ struct EmbeddingsCommand: AsyncParsableCommand {
       user: user
     ))
 
-    format.print(title: "Embeddings")
-
-    print(usage: result.usage, format: config.format())
-    
     let outputURL = URL(fileURLWithPath: output)
     let jsonData = try JSONEncoder().encode(result.data)
     try jsonData.write(to: outputURL)
+
+    format.print(title: "Embeddings")
+    format.print(usage: result.usage)
     format.print(label: "JSON File Saved:", value: output)
   }
 }
