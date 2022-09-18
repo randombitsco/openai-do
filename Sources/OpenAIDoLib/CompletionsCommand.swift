@@ -151,6 +151,6 @@ struct CompletionsCommand: AsyncParsableCommand {
     let result = try await client.call(completions)
     
     format.print(title: "Completions")
-    print(completion: result, format: config.format())
+    format.print(completion: result)
   }
 }

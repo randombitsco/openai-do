@@ -28,6 +28,6 @@ struct ModerationsCommand: AsyncParsableCommand {
     ))
     
     format.print(title: "Moderations")
-    print(moderationsResponse: response, format: format)
+    format.print(moderationsResponse: response)
   }
 }

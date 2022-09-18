@@ -35,7 +35,7 @@ struct FilesListCommand: AsyncParsableCommand {
     let files = try await client.call(Files.List())
         
     format.print(title: "Files:")
-    format.print(list: files.data.sorted(by: { $0.id.value < $1.id.value }), with: print(file:format:))
+    format.print(list: files.data.sorted(by: { $0.id.value < $1.id.value }), with: Format.print(file:))
   }
 }
 
@@ -72,7 +72,7 @@ struct FilesUploadCommand: AsyncParsableCommand {
     let result = try await client.call(Files.Upload(purpose: purpose, file: fileURL))
     
     format.print(title: "File Detail")
-    print(file: result, format: format)
+    format.print(file: result)
   }
 }
 
@@ -96,7 +96,7 @@ struct FilesDetailCommand: AsyncParsableCommand {
     let file = try await client.call(Files.Details(id: fileId))
     
     format.print(title: "File Detail")
-    print(file: file, format: format)
+    format.print(file: file)
   }
 }
 
@@ -135,7 +135,7 @@ struct FilesDownloadCommand: AsyncParsableCommand {
         throw AppError("Unable to decode data file as UTF-8: \(fileId)")
       }
       format.print(subtitle: "File Content:")
-      print(outputString)
+      format.print(text: outputString)
     }
   }
 }
