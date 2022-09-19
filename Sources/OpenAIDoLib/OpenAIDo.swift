@@ -2,6 +2,7 @@ import ArgumentParser
 import Foundation
 import OpenAIBits
 
+@usableFromInline
 let COMMAND_NAME = "openai-do"
 
 struct AppError: Error, CustomStringConvertible {

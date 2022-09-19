@@ -5,15 +5,15 @@ import Foundation
 ///
 /// - Parameter value: The value to encode
 /// - Returns The encoded value.
-func jsonEncode<T: Encodable>(_ value: T) throws -> String {
-  return try String(decoding: jsonEncodeData(value), as: UTF8.self)
+func jsonEncode<T: Encodable>(_ value: T, pretty: Bool = false) throws -> String {
+  return try String(decoding: jsonEncodeData(value, pretty: pretty), as: UTF8.self)
 }
 
 /// Encodes the provided value to a JSON ``Data`` value
 ///
 /// - Parameter value: The value to encode
-/// - Returns the encoded value.
-func jsonEncodeData<T: Encodable>(_ value: T) throws -> Data {
+/// - Returns: The encoded value.
+func jsonEncodeData<T: Encodable>(_ value: T, pretty: Bool = false) throws -> Data {
   let encoder = JSONEncoder()
   encoder.keyEncodingStrategy = .convertToSnakeCase
   encoder.dateEncodingStrategy = .custom({ date, encoder in
@@ -21,6 +21,10 @@ func jsonEncodeData<T: Encodable>(_ value: T) throws -> Data {
     var singleValueEnc = encoder.singleValueContainer()
     try singleValueEnc.encode(seconds)
   })
+  if pretty {
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+  }
+  
   do {
     return try encoder.encode(value)
   } catch EncodingError.invalidValue(let value, let ctx) {
@@ -33,10 +37,20 @@ func jsonEncodeData<T: Encodable>(_ value: T) throws -> Data {
 /// - Parameters:
 ///   - value: The value to decode
 ///   - targetType: The type to decode to (optional)
+///
+/// - Returns: The decoded value as the `targetType`
+///
+/// - Throws A ``ArgumentParser/ValidationError`` if there is an issue.
 func jsonDecode<T: Decodable>(_ value: String, as targetType: T.Type = T.self) throws -> T {
   return try jsonDecodeData(value.data(using: .utf8)!)
 }
 
+/// Attempts to decode the provided ``Data`` value into the target type `T`.
+/// - Parameters:
+///   - value: The data to decoe.
+///   - targetType: The type to decode into (optional)
+/// - Throws: An ``ArgumentParser/ValidationError`` if there is an issue while parsing.
+/// - Returns: The new instance of `T`.
 func jsonDecodeData<T: Decodable>(_ value: Data, as targetType: T.Type = T.self) throws -> T {
   let decoder = JSONDecoder()
   decoder.keyDecodingStrategy = .convertFromSnakeCase

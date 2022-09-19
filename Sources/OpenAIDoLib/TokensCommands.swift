@@ -43,6 +43,10 @@ struct TokensCountCommand: AsyncParsableCommand {
 // MARK: encode
 
 struct TokensEncodeCommand: AsyncParsableCommand {
+  enum JsonStyle: EnumerableFlag {
+    case compact, pretty
+  }
+  
   static var configuration = CommandConfiguration(
     commandName: "encode",
     abstract: "Encodes the input text into an estimate of the tokens array used by GPT-2/3.",
@@ -54,6 +58,9 @@ struct TokensEncodeCommand: AsyncParsableCommand {
   @Argument(help: "The text to encode into tokens.")
   var text: String
   
+  /// Options for outputing in JSON format.
+  @OptionGroup var toJson: ToJSONFrom<[Int]>
+
   @Flag(help: "Output more details.")
   var verbose: Bool = false
   
@@ -65,10 +72,14 @@ struct TokensEncodeCommand: AsyncParsableCommand {
     let encoder = try TokenEncoder()
     let tokens = try encoder.encode(text: text)
 
-    format.print(title: "Token Encoding")
-    format.println()
-    format.print(label: "Tokens", value: tokens)
-    format.print(label: "Count", value: tokens.count, verbose: true)
+    if toJson.enabled {
+      format.print(text: try toJson.encode(value: tokens))
+    } else {
+      format.print(title: "Token Encoding")
+      format.println()
+      format.print(label: "Tokens", value: tokens)
+      format.print(label: "Count", value: tokens.count, verbose: true)
+    }
   }
 }
 
@@ -95,10 +106,9 @@ struct TokensDecodeCommand: AsyncParsableCommand {
   """)
   var input: [String]
   
-  @Flag(help: """
-  Indicates the input will be a JSON-encoded array of tokens.
-  """)
-  var fromJson: Bool = false
+  @OptionGroup var fromJson: FromJSONTo<[Int]>
+  
+  @OptionGroup var toJson: ToJSONFrom<String>
   
   @Flag(help: "Output more details.")
   var verbose: Bool = false
@@ -106,56 +116,57 @@ struct TokensDecodeCommand: AsyncParsableCommand {
   var format: Format {
     verbose ? .verbose : .default
   }
-  
-  /// Parses the ``input`` into an integer array, if possible.
-  func getTokens() throws -> [Int] {
-    // Is it JSON?
-    guard !fromJson else {
-      guard input.count == 1, let json = input.first else {
-        throw ValidationError("""
-        Specify a single JSON-encoded text value.
-        
-          > \(COMMAND_NAME) tokens decode --from-json '[15496, 11, 995, 0]'
-        
-        """)
-      }
-      return try jsonDecode(json)
-    }
     
-    guard !input.isEmpty else {
-      throw ValidationError("""
-      Specify at least one integer value to decode.
-      
-        > \(COMMAND_NAME) tokens decode 15496 11 995 0
-      
-      """)
-    }
-    
-    // It's integers.
-    return try input.map({ text in
-      guard let int = Int(text, radix: 10) else {
-        throw ValidationError("""
-        Expected an integer, got "\(text)".
-        
-          > \(COMMAND_NAME) tokens decode 15496 11 995 0
-        
-        """)
-      }
-      return int
-    })
-  }
-  
   mutating func validate() throws {
-    let _ = try getTokens()
+    try fromJson.validate {
+      input
+    } example: {
+      "tokens decode --from-json '[15496 11 995 0]'"
+    } ifDisabled: {
+      guard !input.isEmpty else {
+        throw ValidationError {
+          "Specify at least one integer value to decode."
+        } example: {
+          "tokens decode 15496 11 995 0"
+        }
+      }
+    }
+    
+    try toJson.validate()
   }
   
   mutating func run() async throws {
+    let tokens = try fromJson.decode {
+      guard let text = input.first else {
+        throw ValidationError {
+          "Expected a single text value, but got \(input.count)."
+        } example: {
+          "tokens decode --from-json '[15496, 11, 995, 0]'"
+        }
+      }
+      return text
+    } otherwise: {
+      try input.map({ text in
+        guard let int = Int(text, radix: 10) else {
+          throw ValidationError {
+            "Expected an integer, got \"\(text)\"."
+          } example: {
+            "tokens decode 15496 11 995 0"
+          }
+        }
+        return int
+      })
+    }
+    
     let encoder = try TokenEncoder()
-    let tokens = try getTokens()
     let text = try encoder.decode(tokens: tokens)
     
-    format.print(title: "Token Decoding")
-    format.println()
-    format.print(label: "Text", value: text)
+    if toJson.enabled {
+      format.print(text: try toJson.encode(value: text))
+    } else {
+      format.print(title: "Token Decoding")
+      format.println()
+      format.print(label: "Text", value: text)
+    }
   }
 }

@@ -272,3 +272,14 @@ struct Format {
   }
 }
 
+extension Format {
+  func print<T: Encodable>(asJson value: T, pretty: Bool = false) {
+    do {
+      let json = try jsonEncode(value, pretty: pretty)
+      print(text: json)
+    } catch {
+      let message = "{\"error\": \"\(String(describing: error))\"}"
+      print(text: message)
+    }
+  }
+}
