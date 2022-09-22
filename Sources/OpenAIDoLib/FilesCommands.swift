@@ -93,7 +93,7 @@ struct FilesDetailCommand: AsyncParsableCommand {
     let client = config.client()
     let format = config.format()
 
-    let file = try await client.call(Files.Details(id: fileId))
+    let file = try await client.call(Files.Detail(id: fileId))
     
     format.print(title: "File Detail")
     format.print(file: file)

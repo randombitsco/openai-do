@@ -15,7 +15,7 @@
         "repositoryURL": "https://github.com/randomeizer/swift-argument-parser.git",
         "state": {
           "branch": "randomeizer/322-duplicate-fields-in-OptionGroup",
-          "revision": "3355339c7517985b3f87d081f5918f032271e9a4",
+          "revision": "80fc0df3b5215aab2da6fe41a7ec9d4cd1047439",
           "version": null
         }
       },
@@ -33,7 +33,7 @@
         "repositoryURL": "https://github.com/randombitsco/swift-openai-bits",
         "state": {
           "branch": "main",
-          "revision": "d691a30cf5b0ecf8a80ddf59bcb5e2bb149857db",
+          "revision": "c8e1dc90d5dddd9d7f36651d255b96a4fe4c938b",
           "version": null
         }
       },

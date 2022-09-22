@@ -172,7 +172,7 @@ struct FineTunesDetailCommand: AsyncParsableCommand {
     let client = config.client()
     let format = config.format()
     
-    let result = try await client.call(FineTunes.Details(id: fineTuneId))
+    let result = try await client.call(FineTunes.Detail(id: fineTuneId))
     
     format.print(title: "Fine-Tune Detail")
     format.print(fineTune: result)
