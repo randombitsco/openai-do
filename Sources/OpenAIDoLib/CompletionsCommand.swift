@@ -118,7 +118,7 @@ struct CompletionsCommand: AsyncParsableCommand {
     }
   }
   
-  mutating func validate() throws {
+  mutating func validate() async throws {
     _ = try parseLogitBias()
   }
   

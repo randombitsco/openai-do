@@ -166,10 +166,9 @@ struct Format {
     print(label: "Created", value: completion.created, verbose: true)
     print(label: "Model", value: completion.model)
 
-    println()
     print(list: completion.choices, label: "Choice", with: Format.print(choice:))
 
-    Format.print(completion.usage as! CustomStringConvertible)
+    print(usage: completion.usage)
   }
 
   func print(event: FineTune.Event) {
