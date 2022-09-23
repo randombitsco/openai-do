@@ -14,7 +14,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/randombitsco/swift-openai-bits", branch: "main"),
-        .package(url: "https://github.com/randomeizer/swift-argument-parser.git", branch: "randomeizer/322-duplicate-fields-in-OptionGroup"),
+//        .package(url: "../swift-openai-bits", branch: "main"),
+        .package(url: "https://github.com/apple/swift-argument-parser.git", branch: "main"),
         .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "0.5.0"),
     ],
     targets: [
@@ -36,6 +37,7 @@ let package = Package(
           dependencies: [
             "OpenAIDoLib",
             .product(name: "CustomDump", package: "swift-custom-dump"),
+            .product(name: "OpenAIBitsTestHelpers", package: "swift-openai-bits"),
           ]
         ),
     ]
