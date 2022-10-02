@@ -1,6 +1,7 @@
 // Additional `ExpressibleByArgument` extensions for `OpenAIBits` types.
 
 import ArgumentParser
+import Foundation
 import OpenAIBits
 
 // MARK: File.ID
@@ -39,7 +40,7 @@ extension Model.ID: ExpressibleByArgument {
 
 extension Penalty: ExpressibleByArgument {
   public init?(argument: String) {
-    guard let value = Double.init(argument: argument) else {
+    guard let value = Decimal(string: argument) else {
       return nil
     }
     self.init(value)
@@ -50,7 +51,7 @@ extension Penalty: ExpressibleByArgument {
 
 extension Percentage: ExpressibleByArgument {
   public init?(argument: String) {
-    guard let value = Double.init(argument: argument) else {
+    guard let value = Decimal(string: argument) else {
       return nil
     }
     self.init(value)

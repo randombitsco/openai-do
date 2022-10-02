@@ -13,10 +13,11 @@ let package = Package(
 //        .library(name: "OpenAIDo", targets: ["OpenAIDo"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/randombitsco/swift-openai-bits", branch: "main"),
-//        .package(url: "../swift-openai-bits", branch: "main"),
+//        .package(url: "https://github.com/randombitsco/swift-openai-bits", branch: "main"),
+        .package(url: "../swift-openai-bits", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", branch: "main"),
         .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "0.5.0"),
+        .package(url: "https://github.com/pointfreeco/swift-parsing", from: "0.10.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -31,6 +32,7 @@ let package = Package(
           dependencies: [
             .product(name: "OpenAIBits", package: "swift-openai-bits"),
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            .product(name: "Parsing", package: "swift-parsing"),
           ]),
         .testTarget(
           name: "OpenAIDoTests",

@@ -52,7 +52,7 @@ struct EditsCommand: AsyncParsableCommand {
     let client = config.client()
     let format = config.format()
     
-    let edits = Edits(
+    let edits = Edits.Create(
       model: modelId.modelId,
       input: input,
       instruction: instruction,

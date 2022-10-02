@@ -150,7 +150,7 @@ struct Format {
 
   // MARK: Printers for specific types.
 
-  func print(choice: Completions.Choice) {
+  func print(choice: Completion.Choice) {
     let border = String(repeating: "~", count: 40)
 
     print(label: "Logprobs", value: choice.logprobs, verbose: true)
@@ -161,7 +161,7 @@ struct Format {
     print(text: border)
   }
 
-  func print(completion: Completions.Response) {
+  func print(completion: Completion) {
     print(label: "ID", value: completion.id, verbose: true)
     print(label: "Created", value: completion.created, verbose: true)
     print(label: "Model", value: completion.model)
@@ -252,10 +252,10 @@ struct Format {
       print(text: "#\(i + 1): \(result.flagged ? "FLAGGED" : "Unflagged") ")
       for category in Moderations.Category.allCases {
         var output = "N/A"
-        if let flagged = result.categories[category] {
+        if let flagged = result.categories?[category] {
           output = flagged ? "YES" : "no "
         }
-        if let score = result.categoryScores[category] {
+        if let score = result.categoryScores?[category] {
           output += " (\(score))"
         }
         let categoryName = "\(category):".padding(toLength: maxCategoryName + 1, withPad: " ", startingAt: 0)

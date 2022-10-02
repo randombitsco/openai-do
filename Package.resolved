@@ -15,8 +15,17 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser.git",
         "state": {
           "branch": "main",
-          "revision": "587d26a2aa5d962b8845805378fa93b7c270d820",
+          "revision": "b80fb05f45cf85f609eef759e607f42a1180e513",
           "version": null
+        }
+      },
+      {
+        "package": "swift-case-paths",
+        "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
+        "state": {
+          "branch": null,
+          "revision": "7346701ea29da0a85d4403cf3d7a589a58ae3dee",
+          "version": "0.9.2"
         }
       },
       {
@@ -30,11 +39,20 @@
       },
       {
         "package": "swift-openai-bits",
-        "repositoryURL": "https://github.com/randombitsco/swift-openai-bits",
+        "repositoryURL": "/Users/david/Development/Projects/randombitsco/swift-openai-bits",
         "state": {
           "branch": "main",
-          "revision": "9d7fe657d25c55bc4784a1b3de162e13dbbd1d0c",
+          "revision": "8047c761e7f6a14816b41394294676ce72984e1e",
           "version": null
+        }
+      },
+      {
+        "package": "swift-parsing",
+        "repositoryURL": "https://github.com/pointfreeco/swift-parsing",
+        "state": {
+          "branch": null,
+          "revision": "bc92e84968990b41640214b636667f35b6e5d44c",
+          "version": "0.10.0"
         }
       },
       {

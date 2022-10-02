@@ -28,9 +28,9 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     //    try await cmd.run()
     try await XCTAssertExpectOpenAICall {
-      Completions(model: "foobar", prompt: "ABC")
+      Completions.Create(model: "foobar", prompt: "ABC")
     } returning: {
-      Completions.Response(
+      Completion(
         id: "success", created: now, model: "foobar",
         choices: [
           .init(text: "DEF", index: 0, finishReason: "length")
@@ -69,7 +69,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     let now = Date()
     
     try await XCTAssertExpectOpenAICall {
-      Completions(model: "foobar", prompt: "ABC", n: 2)
+      Completions.Create(model: "foobar", prompt: "ABC", n: 2)
     } returning: {
       .init(
         id: "success", created: now, model: "foobar",
@@ -119,7 +119,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     let now = Date()
     
     try await XCTAssertExpectOpenAICall {
-      Completions(model: "foobar", prompt: "ABC", n: 2)
+      Completions.Create(model: "foobar", prompt: "ABC", n: 2)
     } returning: {
       .init(
         id: "success", created: now, model: "foobar",
@@ -176,7 +176,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       "--presence-penalty", "2.0",
       "--frequency-penalty", "-2.0",
       "--best-of", "3",
-      "--logit-bias", "{\"50256\": -100}",
+      "--logit-bias", "50256:-100",
       "--user", "jblogs",
       "ABC"
     )
@@ -188,7 +188,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     //    try await cmd.run()
     try await XCTAssertExpectOpenAICall {
-      Completions(
+      Completions.Create(
         model: "foobar",
         prompt: "ABC",
         suffix: "foo",
@@ -196,7 +196,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         temperature: 0.5,
         topP: 0.6,
         n: 2,
-        stream: false,
+//        stream: false,
         logprobs: 1,
         echo: true,
         stop: ["bar"],
@@ -207,7 +207,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         user: "jblogs"
       )
     } returning: {
-      Completions.Response(
+      Completion(
         id: "success", created: now, model: "foobar",
         choices: [
           .init(text: "DEF", index: 0, finishReason: "length")
