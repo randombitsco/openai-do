@@ -55,20 +55,20 @@ struct CompletionsCommand: AsyncParsableCommand {
   """)
   var logprobs: Int?
   
-  @Option(help: "Echo back the prompt in addition to the completion. (Defaults to false)")
-  var echo: Bool?
+  @Flag(help: "Echo back the prompt in addition to the completion. (Defaults to false)")
+  var echo: Bool = false
   
   @Option(help: """
   A sequence where the API will stop generating further tokens. The returned text will not contain the stop sequence.
   """)
   var stop: String?
   
-  @Option(help: """
+  @Option(parsing: .unconditional, help: """
   Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. (Defaults to 0)
   """)
   var presencePenalty: Penalty?
   
-  @Option(help: "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. (Defaults to 0)")
+  @Option(parsing: .unconditional, help: "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. (Defaults to 0)")
   var frequencyPenalty: Penalty?
   
   @Option(help: """
@@ -78,7 +78,7 @@ struct CompletionsCommand: AsyncParsableCommand {
   
   Note: Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for `max-tokens` and `stop`.
   """)
-  var bestOf: Percentage?
+  var bestOf: Int?
   
   @Option(help: """
   Modify the likelihood of specified tokens appearing in the completion.
@@ -100,6 +100,8 @@ struct CompletionsCommand: AsyncParsableCommand {
   Note that '<|endoftext|>' is the document separator that the model sees during training, so if a prompt is not specified the model will generate as if from the beginning of a new document.
   """)
   var prompt: String
+  
+  @OptionGroup var toJson: ToJSONFrom<Completions.Response>
   
   @OptionGroup var config: Config
   
@@ -150,7 +152,11 @@ struct CompletionsCommand: AsyncParsableCommand {
     
     let result = try await client.call(completions)
     
-    format.print(title: "Completions")
-    format.print(completion: result)
+    if toJson.enabled {
+      format.print(text: try toJson.encode(value: result))
+    } else {
+      format.print(title: "Completions")
+      format.print(completion: result)
+    }
   }
 }
