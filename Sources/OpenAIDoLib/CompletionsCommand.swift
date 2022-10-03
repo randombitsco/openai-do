@@ -106,6 +106,9 @@ struct CompletionsCommand: AsyncParsableCommand {
   
   @OptionGroup var config: Config
   
+  /// Parses the logit bias string into a dictionary of token IDs to biases.
+  /// - Returns: A dictionary of token IDs to biases, or `nil` if none provided.
+  /// - Throws: `ValidationError` if the logit bias string is invalid.
   func parseLogitBias() throws -> [Token: Int8]? {
     guard let logitBias = logitBias else {
       return nil
@@ -153,7 +156,7 @@ struct CompletionsCommand: AsyncParsableCommand {
     if toJson.enabled {
       format.print(text: try toJson.encode(value: result))
     } else {
-      format.print(title: "Completions")
+      format.print(title: "Create Completions")
       format.print(completion: result)
     }
   }

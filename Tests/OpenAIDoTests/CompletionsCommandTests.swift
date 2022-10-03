@@ -42,8 +42,8 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       try await cmd.run()
       
       XCTAssertNoDifference(printed, """
-      Completions
-      ===========
+      Create Completions
+      ==================
       Model: foobar
       
       Choice #1:
@@ -84,8 +84,8 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       try await cmd.run()
       
       XCTAssertNoDifference(printed, """
-      Completions
-      ===========
+      Create Completions
+      ==================
       Model: foobar
       
       Choice #1:
@@ -160,6 +160,88 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       """)
     }
   }
+
+  func testSingleLogitBias() async throws {
+    var cmd: CompletionsCommand = try parse("completions", "--model-id", "foobar", "--logit-bias", "1234:10", "ABC")
+    
+    XCTAssertEqual(cmd.modelId, "foobar")
+    XCTAssertEqual(cmd.logitBias, "1234:10")
+    XCTAssertEqual(cmd.prompt, "ABC")
+    
+    let now = Date()
+    
+    try await XCTAssertExpectOpenAICall {
+      Completions.Create(model: "foobar", prompt: "ABC", logitBias: [1234:10])
+    } returning: {
+      .init(
+        id: "success", created: now, model: "foobar",
+        choices: [
+          .init(text: "DEF", index: 0, finishReason: "finished"),
+        ],
+        usage: .init(promptTokens: 1, completionTokens: 2, totalTokens: 3)
+      )
+    } whileDoing: {
+      try await cmd.validate()
+      try await cmd.run()
+      
+      XCTAssertNoDifference(printed, """
+      Create Completions
+      ==================
+      Model: foobar
+      
+      Choice #1:
+      ----------
+      Finish Reason: finished
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      DEF
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
+      Tokens Used: Prompt: 1; Completion: 2; Total: 3
+
+      """)
+    }
+  }
+
+  func testMultipleLogitBiases() async throws {
+    var cmd: CompletionsCommand = try parse("completions", "--model-id", "foobar", "--logit-bias", "1234:10,5678:20", "ABC")
+    
+    XCTAssertEqual(cmd.modelId, "foobar")
+    XCTAssertEqual(cmd.logitBias, "1234:10,5678:20")
+    XCTAssertEqual(cmd.prompt, "ABC")
+    
+    let now = Date()
+    
+    try await XCTAssertExpectOpenAICall {
+      Completions.Create(model: "foobar", prompt: "ABC", logitBias: [1234:10, 5678:20])
+    } returning: {
+      .init(
+        id: "success", created: now, model: "foobar",
+        choices: [
+          .init(text: "DEF", index: 0, finishReason: "finished"),
+        ],
+        usage: .init(promptTokens: 1, completionTokens: 2, totalTokens: 3)
+      )
+    } whileDoing: {
+      try await cmd.validate()
+      try await cmd.run()
+      
+      XCTAssertNoDifference(printed, """
+      Create Completions
+      ==================
+      Model: foobar
+      
+      Choice #1:
+      ----------
+      Finish Reason: finished
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      DEF
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
+      Tokens Used: Prompt: 1; Completion: 2; Total: 3
+
+      """)
+    }
+  }
   
   func testAllArguments() async throws {
     var cmd: CompletionsCommand = try parse(
@@ -219,8 +301,8 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       try await cmd.run()
       
       XCTAssertNoDifference(printed, """
-      Completions
-      ===========
+      Create Completions
+      ==================
       Model: foobar
       
       Choice #1:
