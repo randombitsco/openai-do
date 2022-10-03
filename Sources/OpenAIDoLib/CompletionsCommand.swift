@@ -68,7 +68,7 @@ struct CompletionsCommand: AsyncParsableCommand {
   Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. (Defaults to 0)
   """)
   var presencePenalty: Penalty?
-  
+
   @Option(parsing: .unconditional, help: "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. (Defaults to 0)")
   var frequencyPenalty: Penalty?
   
@@ -109,7 +109,7 @@ struct CompletionsCommand: AsyncParsableCommand {
   /// Parses the logit bias string into a dictionary of token IDs to biases.
   /// - Returns: A dictionary of token IDs to biases, or `nil` if none provided.
   /// - Throws: `ValidationError` if the logit bias string is invalid.
-  func parseLogitBias() throws -> [Token: Int8]? {
+  func parseLogitBias() throws -> [Token: Decimal]? {
     guard let logitBias = logitBias else {
       return nil
     }
@@ -167,11 +167,21 @@ extension Token {
     Int.parser(of: Substring.self)
   }
 }
+
+extension Decimal {
+  static func parser(of: Substring.Type = Substring.self) -> AnyParser<Substring, Decimal>
+  {
+    Parse(Decimal.init(_:)) {
+      Double.parser(of: Substring.self)
+    }
+    .eraseToAnyParser()
+  }
+}
     
 let tokenBiasParser = Parse {
   Token.parser
   ":"
-  Int8.parser()
+  Decimal.parser(of: Substring.self)
 }
 
 let logitBiasParser = Many(1...) {
@@ -179,8 +189,8 @@ let logitBiasParser = Many(1...) {
 } separator: {
   ","
 }
-.map { (tokenBiasPairs: [(Token, Int8)]) -> [Token: Int8] in
-  tokenBiasPairs.reduce(into: [Token: Int8]()) { partialResult, tokenBiasPair in
+.map { (tokenBiasPairs: [(Token, Decimal)]) -> [Token: Decimal] in
+  tokenBiasPairs.reduce(into: [Token: Decimal]()) { partialResult, tokenBiasPair in
     partialResult[tokenBiasPair.0] = tokenBiasPair.1
   }
 }

@@ -39,7 +39,7 @@ struct EmbeddingsCommand: AsyncParsableCommand {
     let client = config.client()
     let format = config.format()
 
-    let result = try await client.call(Embeddings(
+    let result = try await client.call(Embeddings.Create(
       model: modelId, 
       input: .string(input),
       user: user

@@ -22,12 +22,12 @@ struct ModerationsCommand: AsyncParsableCommand {
     let client = config.client()
     let format = config.format()
     
-    let response = try await client.call(Moderations(
+    let response = try await client.call(Moderations.Create(
       input: .string(input),
       model: stable == true ? .stable : .latest
     ))
     
     format.print(title: "Moderations")
-    format.print(moderationsResponse: response)
+    format.print(moderation: response)
   }
 }

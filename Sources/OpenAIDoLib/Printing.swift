@@ -246,11 +246,11 @@ struct Format {
     print(label: "Supports Embedding", value: model.supportsEmbedding, verbose: true)
   }
 
-  func print(moderationsResponse response: Moderations.Response) {
-    let maxCategoryName = Moderations.Category.allCases.map { $0.rawValue.count }.max() ?? 0
+  func print(moderation response: Moderation) {
+    let maxCategoryName = Moderation.Category.allCases.map { $0.rawValue.count }.max() ?? 0
     for (i, result) in response.results.enumerated() {
       print(text: "#\(i + 1): \(result.flagged ? "FLAGGED" : "Unflagged") ")
-      for category in Moderations.Category.allCases {
+      for category in Moderation.Category.allCases {
         var output = "N/A"
         if let flagged = result.categories?[category] {
           output = flagged ? "YES" : "no "
