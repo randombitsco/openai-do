@@ -16,6 +16,7 @@ let package = Package(
 //        .package(url: "https://github.com/randombitsco/swift-openai-bits", branch: "main"),
         .package(url: "../swift-openai-bits", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", branch: "main"),
+//        .package(url: "https://github.com/randomeizer/swift-argument-parser.git", branch: "randomeizer/322-duplicate-fields-in-OptionGroup"),
         .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "0.5.0"),
         .package(url: "https://github.com/pointfreeco/swift-parsing", from: "0.10.0"),
     ],

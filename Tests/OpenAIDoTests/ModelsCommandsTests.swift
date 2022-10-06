@@ -68,6 +68,8 @@ final class ModelsListCommandTests: XCTestCase {
 
 }
 
+// MARK: ModelsDetailCommand
+
 final class ModelsDetailCommandTests: XCTestCase {
   override func setUpWithError() throws {
     Config.findApiKey = { "XYZ" }

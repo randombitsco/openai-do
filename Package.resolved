@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-custom-dump",
         "state": {
           "branch": null,
-          "revision": "c9b6b940d95c0a925c63f6858943415714d8a981",
-          "version": "0.5.2"
+          "revision": "819d9d370cd721c9d87671e29d947279292e4541",
+          "version": "0.6.0"
         }
       },
       {
@@ -42,7 +42,7 @@
         "repositoryURL": "/Users/david/Development/Projects/randombitsco/swift-openai-bits",
         "state": {
           "branch": "main",
-          "revision": "d649594ad3d4fab04a6c4b8a1fdd97a84022b879",
+          "revision": "6d186a716af63e04fff8827252b75699d2ce5375",
           "version": null
         }
       },
