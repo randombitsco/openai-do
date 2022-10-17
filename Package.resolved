@@ -15,7 +15,7 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser.git",
         "state": {
           "branch": "main",
-          "revision": "b80fb05f45cf85f609eef759e607f42a1180e513",
+          "revision": "8a38c7ca5c23a9441373f2bf6f841da7d5ceac6c",
           "version": null
         }
       },
@@ -42,7 +42,7 @@
         "repositoryURL": "/Users/david/Development/Projects/randombitsco/swift-openai-bits",
         "state": {
           "branch": "main",
-          "revision": "6d186a716af63e04fff8827252b75699d2ce5375",
+          "revision": "b059d62e8c37c6bdfdfb3819e47acfec101ea36a",
           "version": null
         }
       },
