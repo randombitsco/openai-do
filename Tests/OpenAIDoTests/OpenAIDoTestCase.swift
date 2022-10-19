@@ -3,6 +3,9 @@ import XCTest
 
 class OpenAIDoTestCase: XCTestCase {
   
+  /// Override this to provide a custom API key.
+  var apiKey = "XYZ"
+  
   var printed: String!
   var _print: (CustomStringConvertible) -> Void = { _ in }
   var _findApiKey: () -> String? = { nil }
@@ -15,7 +18,7 @@ class OpenAIDoTestCase: XCTestCase {
     Format.print = { self.printed.append(String(describing: $0)) }
     
     _findApiKey = Config.findApiKey
-    Config.findApiKey = { "XYZ" }
+    Config.findApiKey = { self.apiKey }
   }
   
   override func tearDown() {

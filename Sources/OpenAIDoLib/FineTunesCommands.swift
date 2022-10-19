@@ -35,7 +35,7 @@ struct FineTunesListCommand: AsyncParsableCommand {
     let result = try await client.call(FineTunes.List())
     
     format.print(title: "Fine-Tunes")
-    format.print(list: result.data, label: "Fine-Tune", with: Format.print(fineTune:))
+    format.print(list: result.data, with: Format.print(fineTune:))
   }
 }
 
@@ -223,7 +223,7 @@ struct FineTunesEventsCommand: AsyncParsableCommand {
     
     let format = config.format()
     format.print(title: "Fine-Tune Events")
-    format.print(list: result.data, label: "Event", with: Format.print(event:))
+    format.print(list: result.data, with: Format.print(event:))
   }
 }
 

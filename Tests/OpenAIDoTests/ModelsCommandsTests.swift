@@ -4,11 +4,7 @@ import XCTest
 
 // MARK: ModelsListCommand
 
-final class ModelsListCommandTests: XCTestCase {
-  override func setUpWithError() throws {
-    Config.findApiKey = { "XYZ" }
-  }
-  
+final class ModelsListCommandTests: OpenAIDoTestCase {
   func testList() throws {
     let cmd: ModelsListCommand = try parse("models", "list")
 
@@ -16,7 +12,7 @@ final class ModelsListCommandTests: XCTestCase {
     XCTAssertEqual(cmd.code, false)
     XCTAssertEqual(cmd.embeddings, false)
     XCTAssertEqual(cmd.fineTuned, false)
-    XCTAssertNil(cmd.includes)
+    XCTAssertNil(cmd.contains)
     
     XCTAssertNil(cmd.config.apiKey)
     XCTAssertEqual(cmd.config.findApiKey(), "XYZ")
@@ -31,7 +27,7 @@ final class ModelsListCommandTests: XCTestCase {
     XCTAssertEqual(cmd.code, false)
     XCTAssertEqual(cmd.embeddings, false)
     XCTAssertEqual(cmd.fineTuned, false)
-    XCTAssertNil(cmd.includes)
+    XCTAssertNil(cmd.contains)
     
     XCTAssertEqual(cmd.config.apiKey, "ABC")
     XCTAssertEqual(cmd.config.findApiKey(), "ABC")
@@ -51,19 +47,19 @@ final class ModelsListCommandTests: XCTestCase {
     XCTAssertEqual(cmd.code, true)
     XCTAssertEqual(cmd.embeddings, true)
     XCTAssertEqual(cmd.fineTuned, true)
-    XCTAssertNil(cmd.includes)
+    XCTAssertNil(cmd.contains)
   }
 
   func testListIncludes() throws {
     let cmd: ModelsListCommand = try parse(
-      "models", "list", "--includes", "foobar"
+      "models", "list", "--contains", "foobar"
     )
 
     XCTAssertEqual(cmd.edits, false)
     XCTAssertEqual(cmd.code, false)
     XCTAssertEqual(cmd.embeddings, false)
     XCTAssertEqual(cmd.fineTuned, false)
-    XCTAssertEqual(cmd.includes, "foobar")
+    XCTAssertEqual(cmd.contains, "foobar")
   }
 
 }

@@ -7,20 +7,10 @@ import XCTest
 
 final class CompletionsCommandTests: OpenAIDoTestCase {
   
-  override func setUpWithError() throws {
-    Config.findApiKey = { "XYZ" }
-    Format.print = { self.printed.append(String(describing: $0)) }
-    printed = ""
-  }
-  
-  override func tearDownWithError() throws {
-    Config.findApiKey = Config.findApiKeyInEnvironment
-    printed = ""
-  }
-
   func testSimple() async throws {
     var cmd: CompletionsCommand = try parse("completions", "--model-id", "foobar", "ABC")
-    
+        
+    XCTAssertEqual(cmd.config.findApiKey(), apiKey)
     XCTAssertEqual(cmd.modelId, "foobar")
     XCTAssertEqual(cmd.prompt, "ABC")
     
@@ -40,14 +30,12 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     } whileDoing: {
       try await cmd.validate()
       try await cmd.run()
-      
+
       XCTAssertNoDifference(printed, """
       Create Completions
-      ==================
       Model: foobar
       
       Choice #1:
-      ----------
       Finish Reason: length
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       DEF
@@ -85,18 +73,15 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       
       XCTAssertNoDifference(printed, """
       Create Completions
-      ==================
       Model: foobar
       
       Choice #1:
-      ----------
       Finish Reason: finished
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       DEF
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       
       Choice #2:
-      ----------
       Finish Reason: length
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       XYZ
@@ -186,11 +171,9 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       
       XCTAssertNoDifference(printed, """
       Create Completions
-      ==================
       Model: foobar
       
       Choice #1:
-      ----------
       Finish Reason: finished
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       DEF
@@ -227,11 +210,9 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       
       XCTAssertNoDifference(printed, """
       Create Completions
-      ==================
       Model: foobar
       
       Choice #1:
-      ----------
       Finish Reason: finished
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       DEF
@@ -302,11 +283,9 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       
       XCTAssertNoDifference(printed, """
       Create Completions
-      ==================
       Model: foobar
       
       Choice #1:
-      ----------
       Finish Reason: length
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       DEF

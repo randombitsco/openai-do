@@ -17,7 +17,6 @@ final class TokensCountCommandTests: OpenAIDoTestCase {
     
     XCTAssertNoDifference(printed, """
     Token Count
-    ===========
     
     Count: 4
     
@@ -48,7 +47,6 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
     
     XCTAssertNoDifference(printed, """
     Token Encoding
-    ==============
     
     Tokens: [15496, 11, 995, 0]
     
@@ -115,7 +113,6 @@ final class TokensDecodeCommandTests: OpenAIDoTestCase {
     
     XCTAssertNoDifference(printed, """
     Token Decoding
-    ==============
     
     Text: Hello, world!
     
@@ -137,7 +134,6 @@ final class TokensDecodeCommandTests: OpenAIDoTestCase {
     
     XCTAssertNoDifference(printed, """
     Token Decoding
-    ==============
     
     Text: Hello, world!
     

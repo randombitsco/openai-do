@@ -37,13 +37,14 @@ struct ModelsListCommand: AsyncParsableCommand {
   @Flag(help: "If set, only fine-tuned models will be listed.")
   var fineTuned: Bool = false
   
-  @Option(help: "A text value the model name must include.")
-  var includes: String?
+  @Option(help: "A text value the model name must contains.")
+  var contains: String?
   
   @OptionGroup var config: Config
   
   mutating func run() async throws {
     let client = config.client()
+    let format = config.format()
     
     var models = try await client.call(Models.List()).data
     
@@ -63,13 +64,19 @@ struct ModelsListCommand: AsyncParsableCommand {
       models = models.filter { $0.isFineTune }
     }
     
-    if let includes = includes {
+    if let includes = contains {
       models = models.filter { $0.id.value.contains(includes) }
     }
     
-    print("Models:")
+    format.print(title: "Available Models")
+    
+//    format.print(
+//      list: models.sorted(by: { $0.id.value < $1.id.value }),
+//      with: Format.print(model:)
+//    )
+    
     for model in models.sorted(by: { $0.id.value < $1.id.value }) {
-      print("- \(model.id)")
+      format.print(bullet: model.id)
     }
   }
 }
@@ -96,6 +103,7 @@ struct ModelsDetailCommand: AsyncParsableCommand {
     let detail = try await client.call(Models.Detail(id: modelId))
     
     format.print(title: "Model Detail")
+    format.print(id: detail)
     format.print(model: detail)
   }
 }
