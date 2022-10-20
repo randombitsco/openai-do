@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/jordanbaird/Prism",
         "state": {
           "branch": null,
-          "revision": "a1b569514bb5baa3975159fa8f710c5441c147c1",
-          "version": "0.0.6"
+          "revision": "6eaba92cb33f2356a25c02acfc5d8cc7876283dc",
+          "version": "0.0.8"
         }
       },
       {
@@ -51,7 +51,7 @@
         "repositoryURL": "/Users/david/Development/Projects/randombitsco/swift-openai-bits",
         "state": {
           "branch": "main",
-          "revision": "8522cd5fa2681f919ee89994d0ef08cea1c054bf",
+          "revision": "3c9a4f3123f88c508b2c4ef8d253509e7e587da9",
           "version": null
         }
       },

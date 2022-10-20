@@ -188,6 +188,12 @@ struct Format {
   func print<T>(list: [T], with printer: Printer<T>) where T: Identified {
     print(list: list, label: \.label, with: printer)
   }
+  
+  func print<K,V>(dictionary: [K:V]) where K: CustomStringConvertible, K: Comparable, V: CustomStringConvertible {
+    for k in dictionary.keys.sorted() {
+      print(label: String(describing: k), value: dictionary[k])
+    }
+  }
 
   /// Prints an item, with a subtitle leading it.
   ///
@@ -238,9 +244,12 @@ struct Format {
   func print(choice: Completion.Choice) {
     print(section: "Text")
     print(textBlock: choice.text)
-    
-    print(label: "Logprobs", value: choice.logprobs, verbose: true)
-    print(label: "Finish Reason", value: choice.finishReason, verbose: true)
+    print(label: "Finish Reason", value: choice.finishReason)
+
+    if let logprobs = choice.logprobs {
+      print(section: "Logprobs")
+      print(logprobs: logprobs)
+    }
   }
 
   func print(completion: Completion) {
@@ -291,25 +300,25 @@ struct Format {
     let indented = indented(by: 2)
     if let events = fineTune.events, !events.isEmpty {
       println()
-      print(subtitle: "Events:")
+      print(section: "Events")
       indented.print(list: events, with: Format.print(event:))
     }
 
     if !fineTune.resultFiles.isEmpty {
       println()
-      print(subtitle: "Result Files:")
+      print(section: "Result Files")
       indented.print(list: fineTune.resultFiles, with: Format.print(file:))
     }
 
     if !fineTune.validationFiles.isEmpty {
       println()
-      print(subtitle: "Validation Files:")
+      print(section: "Validation Files")
       indented.print(list: fineTune.validationFiles, with: Format.print(file:))
     }
 
     if !fineTune.trainingFiles.isEmpty {
       println()
-      print(subtitle: "Training Files:")
+      print(section: "Training Files")
       indented.print(list: fineTune.trainingFiles, with: Format.print(file:))
     }
   }
@@ -321,13 +330,43 @@ struct Format {
   func print<T: Identified>(id identified: T) {
     print(id: identified.id)
   }
+  
+  func print(logprobs: Logprobs) {
+    let count = logprobs.tokens.count
+    let indented = indented(by: 2)
+    
+    for i in 0..<count {
+      print(section: "#\(i+1)")
+      indented.print(label: "Token", value: logprobs.tokens[i].debugDescription)
+      indented.print(label: "Token Logprobs", value: logprobs.tokenLogprobs[i])
+      if showVerbose {
+        let value = logprobs.topLogprobs[i].enumerated()
+          .sorted(by: { left, right in
+            left.element.value > right.element.value
+          })
+          .map { value in
+            "\(value.element.key.debugDescription): \(value.element.value)"
+          }
+          .joined(separator: ", ")
+        indented.print(label: "Top Logprobs", value: value)
+        
+//        var topLogprobs = [String: Double]()
+//        for (k, v) in logprobs.topLogprobs[i] {
+//          topLogprobs[k.debugDescription] = v
+//        }
+//        indented.print(section: "Top Logprobs")
+//        indented.indented(by: 2).print(dictionary: topLogprobs)
+      }
+      indented.print(label: "Text Offset", value: logprobs.textOffset[i])
+    }
+  }
 
   func print(model: Model) {
     print(label: "Created", value: model.created, verbose: true)
     print(label: "Owned By", value: model.ownedBy, verbose: true)
-    print(label: "Is Fine-Tune", value: model.isFineTune)
     print(label: "Root Model", value: model.root, verbose: true)
     print(label: "Parent Model", value: model.parent, verbose: true)
+    print(label: "Is Fine-Tune", value: model.isFineTune)
     print(label: "Supports Code", value: model.supportsCode)
     print(label: "Supports Edit", value: model.supportsEdit)
     print(label: "Supports Embedding", value: model.supportsEmbedding)

@@ -6,6 +6,16 @@ import Parsing
 struct CompletionsCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "completions",
+    abstract: "Commands relating to completions.",
+    subcommands: [
+      CompletionsCreateCommand.self,
+    ]
+  )
+}
+
+struct CompletionsCreateCommand: AsyncParsableCommand {
+  static var configuration = CommandConfiguration(
+    commandName: "create",
     abstract: "Creates a completion for the provided prompt and parameters."
   )
   
