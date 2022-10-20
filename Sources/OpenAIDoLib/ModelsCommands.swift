@@ -78,6 +78,13 @@ struct ModelsListCommand: AsyncParsableCommand {
     for model in models.sorted(by: { $0.id.value < $1.id.value }) {
       format.print(bullet: model.id)
     }
+    
+    Print(verbose: config.verbose) {
+      Title { "Available Models" }
+      for model in models.sorted(by: { $0.id.value < $1.id.value }) {
+        Bullet { model.id as! Printable }
+      }
+    }
   }
 }
 
@@ -98,12 +105,40 @@ struct ModelsDetailCommand: AsyncParsableCommand {
   
   mutating func run() async throws {
     let client = config.client()
-    let format = config.format()
+//    let format = config.format()
     
-    let detail = try await client.call(Models.Detail(id: modelId))
+    let model = try await client.call(Models.Detail(id: modelId))
     
-    format.print(title: "Model Detail")
-    format.print(id: detail)
-    format.print(model: detail)
+//    format.print(title: "Model Detail")
+//    format.print(id: model)
+//    format.print(model: model)
+    
+    Print(verbose: config.verbose) {
+      Title { "Model Detail" }
+      ID(of: model)
+      model.details
+    }
+  }
+}
+
+extension Model {
+  var details: any Printable {
+    Block {
+      WhenVerbose { Label("Created") { created } }
+      WhenVerbose { Label("Owned By") { ownedBy } }
+      Label("Is Fine-Tune") { isFineTune }
+//      WhenVerbose { Label("Root Model") { root } }
+//      WhenVerbose { Label("Parent Model") { parent } }
+//    print(label: "Supports Code", value: model.supportsCode.yesNo)
+//    print(label: "Supports Edit", value: model.supportsEdit.yesNo)
+//    print(label: "Supports Embedding", value: model.supportsEmbedding.yesNo)
+//
+      Label("Permissions") { "" }
+      Indented(by: 2) {
+        
+      }
+//    print(label: "Permissions", value: "")
+//    indented(by: 2).print(list: model.permission, with: Format.print(permission:))
+    }
   }
 }
