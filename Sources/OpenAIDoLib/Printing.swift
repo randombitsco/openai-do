@@ -81,6 +81,40 @@ struct Format {
     Format.print("\n")
   }
   
+  /// Generates a horizontal border `String` with the specified number of characters,
+  /// optionally specifying the character to repeat.
+  ///
+  /// - Parameters:
+  ///   - count: The number of characters in the border (minimum of 1)
+  ///   - of: The `Character` to repeat (defaults to `" "`).
+  /// - Returns: The border characters.
+  static func border(_ count: Int, of: Character = " ") -> String {
+    String(repeating: of, count: max(count, 1))
+  }
+  
+  /// Prints a horizontal border block, indented by the current amount.
+  ///
+  /// - Parameter count: The number of characters to have in the border.
+  /// - Parameter borderChar: The `Character` to repeat in the border. Defaults to " ".
+  func print(border count: Int, of borderChar: Character = " ") {
+    let border = Strikethrough { Self.border(count, of: borderChar) }
+    print(text: border)
+  }
+  
+  /// Prints a potentially multi-line block of text. It will have a border before and after to visually indicate
+  /// the beginning and end of the block.
+  ///
+  /// - Parameter textBlock: The text to print.
+  func print(textBlock: CustomStringConvertible) {
+    let lines = textBlock.description.split(separator: "\n")
+    let borderLength = lines.map(\.count).max() ?? 0
+    let indented = lines.joined(separator: "\n\(indent)")
+    
+    print(border: borderLength)
+    print(text: indented)
+    print(border: borderLength)
+  }
+  
   /// Prints the provided text, underlined on the next line with the `char` character matching the text length.
   ///
   /// - Parameter underline: The text of the title.
@@ -105,6 +139,12 @@ struct Format {
     print(text: Italic { String(describing: text) })
   }
   
+  /// Prints a section title. Typically used for sub-sections within a value.
+  /// - Parameter text: The section title.
+  func print(section text: String) {
+    print(text: Bold { "\(text):" })
+  }
+  
   /// Prints the provided text, prefixed with a bullet-point character.
   ///
   /// - Parameter bullet: The text to print.
@@ -124,7 +164,7 @@ struct Format {
   /// - Parameters:
   ///   - list: The list of values.
   ///   - label: (optional) label to print before the
-  func print<T>(list: [T], itemLabel: (Int) -> Labeller<T> = { index in { _ in "#\(index)"}}, with printer: Printer<T>) {
+  func print<T>(list: [T], itemLabel: (Int) -> Labeller<T> = { index in { _ in "#\(index+1):"}}, with printer: Printer<T>) {
     for (i, item) in list.enumerated() {
       print(item: item, label: itemLabel(i), with: printer)
     }
@@ -188,18 +228,19 @@ struct Format {
       }
     }
   }
+  
+  func print(label: String, value: Bool?, verbose: Bool = false, whenNil: WhenNil = .skip) {
+    print(label: label, value: value?.yesNo, verbose: verbose, whenNil: whenNil)
+  }
 
   // MARK: Printers for specific types.
 
   func print(choice: Completion.Choice) {
-    let border = String(repeating: "~", count: 40)
-
+    print(section: "Text")
+    print(textBlock: choice.text)
+    
     print(label: "Logprobs", value: choice.logprobs, verbose: true)
-    print(label: "Finish Reason", value: choice.finishReason)
-
-    print(text: border)
-    print(text: choice.text)
-    print(text: border)
+    print(label: "Finish Reason", value: choice.finishReason, verbose: true)
   }
 
   func print(completion: Completion) {
@@ -207,8 +248,13 @@ struct Format {
     print(label: "Created", value: completion.created, verbose: true)
     print(label: "Model", value: completion.model)
 
-    print(subtitle: "Choices:")
-    print(list: completion.choices, with: Format.print(choice:))
+    if completion.choices.count == 1,
+       let choice = completion.choices.first {
+      print(choice: choice)
+    } else {
+      print(section: "Choices")
+      print(list: completion.choices, with: Format.print(choice:))
+    }
 
     print(usage: completion.usage)
   }
@@ -279,14 +325,14 @@ struct Format {
   func print(model: Model) {
     print(label: "Created", value: model.created, verbose: true)
     print(label: "Owned By", value: model.ownedBy, verbose: true)
-    print(label: "Is Fine-Tune", value: model.isFineTune.yesNo)
+    print(label: "Is Fine-Tune", value: model.isFineTune)
     print(label: "Root Model", value: model.root, verbose: true)
     print(label: "Parent Model", value: model.parent, verbose: true)
-    print(label: "Supports Code", value: model.supportsCode.yesNo)
-    print(label: "Supports Edit", value: model.supportsEdit.yesNo)
-    print(label: "Supports Embedding", value: model.supportsEmbedding.yesNo)
+    print(label: "Supports Code", value: model.supportsCode)
+    print(label: "Supports Edit", value: model.supportsEdit)
+    print(label: "Supports Embedding", value: model.supportsEmbedding)
     
-    print(label: "Permissions", value: "")
+    print(section: "Permissions")
     indented(by: 2).print(list: model.permission, with: Format.print(permission:))
   }
 
@@ -310,13 +356,13 @@ struct Format {
   
   func print(permission: Model.Permission) {
     print(label: "Created", value: permission.created, verbose: true)
-    print(label: "Is Blocking", value: permission.isBlocking.yesNo)
+    print(label: "Is Blocking", value: permission.isBlocking)
     print(label: "Allow View", value: permission.allowView)
-    print(label: "Allow Logprobs", value: permission.allowLogprobs.yesNo)
-    print(label: "Allow Fine-Tuning", value: permission.allowFineTuning.yesNo)
-    print(label: "Allow Create Engine", value: permission.allowCreateEngine.yesNo, verbose: true)
-    print(label: "Allow Sampling", value: permission.allowSampling.yesNo, verbose: true)
-    print(label: "Allow Search Indices", value: permission.allowSearchIndices.yesNo, verbose: true)
+    print(label: "Allow Logprobs", value: permission.allowLogprobs)
+    print(label: "Allow Fine-Tuning", value: permission.allowFineTuning)
+    print(label: "Allow Create Engine", value: permission.allowCreateEngine, verbose: true)
+    print(label: "Allow Sampling", value: permission.allowSampling, verbose: true)
+    print(label: "Allow Search Indices", value: permission.allowSearchIndices, verbose: true)
     print(label: "Organization", value: permission.organization, verbose: true)
     print(label: "Group", value: permission.group, verbose: true)
   }

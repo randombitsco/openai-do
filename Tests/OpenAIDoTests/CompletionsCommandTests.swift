@@ -34,12 +34,48 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       XCTAssertNoDifference(printed, """
       Create Completions
       Model: foobar
-      
-      Choice #1:
-      Finish Reason: length
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Text:
+      \(Format.border("DEF".count))
       DEF
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      \(Format.border("DEF".count))
+      
+      Tokens Used: Prompt: 2; Completion: 2; Total: 4
+      
+      """)
+    }
+  }
+  
+  func testBlankText() async throws {
+    var cmd: CompletionsCommand = try parse("completions", "--model-id", "foobar", "ABC")
+        
+    XCTAssertEqual(cmd.config.findApiKey(), apiKey)
+    XCTAssertEqual(cmd.modelId, "foobar")
+    XCTAssertEqual(cmd.prompt, "ABC")
+    
+    let now = Date()
+    
+    //    try await cmd.run()
+    try await XCTAssertExpectOpenAICall {
+      Completions.Create(model: "foobar", prompt: "ABC")
+    } returning: {
+      Completion(
+        id: "success", created: now, model: "foobar",
+        choices: [
+          .init(text: "", index: 0, finishReason: "stop")
+        ],
+        usage: .init(promptTokens: 2, completionTokens: 2, totalTokens: 4)
+      )
+    } whileDoing: {
+      try await cmd.validate()
+      try await cmd.run()
+
+      XCTAssertNoDifference(printed, """
+      Create Completions
+      Model: foobar
+      Text:
+      \(Format.border("".count))
+      
+      \(Format.border("".count))
       
       Tokens Used: Prompt: 2; Completion: 2; Total: 4
       
@@ -74,18 +110,17 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       XCTAssertNoDifference(printed, """
       Create Completions
       Model: foobar
-      
-      Choice #1:
-      Finish Reason: finished
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      DEF
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      
-      Choice #2:
-      Finish Reason: length
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      XYZ
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Choices:
+      #1:
+        Text:
+        \(Format.border("DEF".count))
+        DEF
+        \(Format.border("DEF".count))
+      #2:
+        Text:
+        \(Format.border("XYZ".count))
+        XYZ
+        \(Format.border("XYZ".count))
       
       Tokens Used: Prompt: 1; Completion: 2; Total: 3
 
@@ -172,12 +207,10 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       XCTAssertNoDifference(printed, """
       Create Completions
       Model: foobar
-      
-      Choice #1:
-      Finish Reason: finished
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Text:
+      \(Format.border("DEF".count))
       DEF
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      \(Format.border("DEF".count))
       
       Tokens Used: Prompt: 1; Completion: 2; Total: 3
 
@@ -200,7 +233,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       .init(
         id: "success", created: now, model: "foobar",
         choices: [
-          .init(text: "DEF", index: 0, finishReason: "finished"),
+          .init(text: "DEF", index: 0, finishReason: "stop"),
         ],
         usage: .init(promptTokens: 1, completionTokens: 2, totalTokens: 3)
       )
@@ -211,14 +244,103 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       XCTAssertNoDifference(printed, """
       Create Completions
       Model: foobar
-      
-      Choice #1:
-      Finish Reason: finished
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Text:
+      \(Format.border("DEF".count))
       DEF
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      \(Format.border("DEF".count))
       
       Tokens Used: Prompt: 1; Completion: 2; Total: 3
+
+      """)
+    }
+  }
+  
+  func testMultiLineText() async throws {
+    var cmd: CompletionsCommand = try parse(
+      "completions",
+      "--model-id", "foobar",
+      "ABC"
+    )
+    
+    XCTAssertEqual(cmd.modelId, "foobar")
+    XCTAssertEqual(cmd.prompt, "ABC")
+    
+    let now = Date()
+    
+    try await XCTAssertExpectOpenAICall {
+      Completions.Create(model: "foobar", prompt: "ABC")
+    } returning: {
+      .init(
+        id: "success", created: now, model: "foobar",
+        choices: [
+          .init(text: "DEF\nGHI", index: 0, finishReason: "stop")
+        ],
+        usage: .init(promptTokens: 1, completionTokens: 2, totalTokens: 3)
+      )
+    } whileDoing: {
+      try await cmd.validate()
+      try await cmd.run()
+      
+      XCTAssertNoDifference(printed, """
+      Create Completions
+      Model: foobar
+      Text:
+      \(Format.border("DEF".count))
+      DEF
+      GHI
+      \(Format.border("DEF".count))
+      
+      Tokens Used: Prompt: 1; Completion: 2; Total: 3
+
+      """)
+    }
+  }
+  
+  func testMultipleMultiLineText() async throws {
+    var cmd: CompletionsCommand = try parse(
+      "completions",
+      "--model-id", "foobar",
+      "-n", "2",
+      "ABC"
+    )
+    
+    XCTAssertEqual(cmd.modelId, "foobar")
+    XCTAssertEqual(cmd.n, 2)
+    XCTAssertEqual(cmd.prompt, "ABC")
+    
+    let now = Date()
+    
+    try await XCTAssertExpectOpenAICall {
+      Completions.Create(model: "foobar", prompt: "ABC", n: 2)
+    } returning: {
+      .init(
+        id: "success", created: now, model: "foobar",
+        choices: [
+          .init(text: "DEF", index: 0, finishReason: "stop"),
+          .init(text: "DEFGHIJKLMNOPQRSTUVWXYZ", index: 1, finishReason: "stop")
+        ],
+        usage: .init(promptTokens: 1, completionTokens: 5, totalTokens: 6)
+      )
+    } whileDoing: {
+      try await cmd.validate()
+      try await cmd.run()
+      
+      XCTAssertNoDifference(printed, """
+      Create Completions
+      Model: foobar
+      Choices:
+      #1:
+        Text:
+        \(Format.border("DEF".count))
+        DEF
+        \(Format.border("DEF".count))
+      #2:
+        Text:
+        \(Format.border("DEFGHIJKLMNOPQRSTUVWXYZ".count))
+        DEFGHIJKLMNOPQRSTUVWXYZ
+        \(Format.border("DEFGHIJKLMNOPQRSTUVWXYZ".count))
+      
+      Tokens Used: Prompt: 1; Completion: 5; Total: 6
 
       """)
     }
@@ -284,12 +406,52 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       XCTAssertNoDifference(printed, """
       Create Completions
       Model: foobar
-      
-      Choice #1:
-      Finish Reason: length
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Text:
+      \(Format.border("DEF".count))
       DEF
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      \(Format.border("DEF".count))
+      
+      Tokens Used: Prompt: 2; Completion: 2; Total: 4
+      
+      """)
+    }
+  }
+  
+  func testVerbose() async throws {
+    var cmd: CompletionsCommand = try parse("completions", "--model-id", "foobar", "--verbose", "ABC")
+        
+    XCTAssertEqual(cmd.config.findApiKey(), apiKey)
+    XCTAssertEqual(cmd.config.verbose, true)
+    XCTAssertEqual(cmd.modelId, "foobar")
+    XCTAssertEqual(cmd.prompt, "ABC")
+    
+    let now = Date()
+    
+    //    try await cmd.run()
+    try await XCTAssertExpectOpenAICall {
+      Completions.Create(model: "foobar", prompt: "ABC")
+    } returning: {
+      Completion(
+        id: "success", created: now, model: "foobar",
+        choices: [
+          .init(text: "DEF", index: 0, logprobs: ["foo", "bar"], finishReason: "length")
+        ],
+        usage: .init(promptTokens: 2, completionTokens: 2, totalTokens: 4)
+      )
+    } whileDoing: {
+      try await cmd.validate()
+      try await cmd.run()
+
+      XCTAssertNoDifference(printed, """
+      Create Completions
+      ID: success
+      Created: \(now.description)
+      Model: foobar
+      Text:
+      \(Format.border("DEF".count))
+      DEF
+      \(Format.border("DEF".count))
+      Finish Reason: length
       
       Tokens Used: Prompt: 2; Completion: 2; Total: 4
       
