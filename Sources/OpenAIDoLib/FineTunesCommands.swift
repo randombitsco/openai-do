@@ -26,11 +26,13 @@ struct FineTunesListCommand: AsyncParsableCommand {
     abstract: "Lists the current fine-tuned models."
   )
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
     
     let result = try await client.call(FineTunes.List())
     
@@ -127,7 +129,9 @@ struct FineTunesCreateCommand: AsyncParsableCommand {
   """)
   public var suffix: String?
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func validate() throws {
     if computeClassificationMetrics == true && validationFile == nil {
@@ -136,8 +140,8 @@ struct FineTunesCreateCommand: AsyncParsableCommand {
   }
 
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let format = format.new()
+    let client = client.new()
     
     let results = try await client.call(FineTunes.Create(
       trainingFile: trainingFile, validationFile: validationFile,
@@ -166,11 +170,13 @@ struct FineTunesDetailCommand: AsyncParsableCommand {
   @Option(help: "The ID of the fine-tune job.")
   var fineTuneId: FineTune.ID
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
     
     let result = try await client.call(FineTunes.Detail(id: fineTuneId))
     
@@ -190,14 +196,16 @@ struct FineTunesCancelCommand: AsyncParsableCommand {
   @Option(help: "The ID of the fine-tune job to cancel.")
   var fineTuneId: FineTune.ID
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
+    let client = client.new()
     
     let result = try await client.call(FineTunes.Cancel(id: fineTuneId))
     
-    let format = config.format()
+    let format = format.new()
     format.print(title: "Fine-Tune Cancelled")
     format.print(fineTune: result)
   }
@@ -214,14 +222,16 @@ struct FineTunesEventsCommand: AsyncParsableCommand {
   @Option(help: "The ID of the fine-tune job to get events for.")
   var fineTuneId: FineTune.ID
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
+    let client = client.new()
     
     let result = try await client.call(FineTunes.Events(id: fineTuneId))
     
-    let format = config.format()
+    let format = format.new()
     format.print(title: "Fine-Tune Events")
     format.print(list: result.data, with: Format.print(event:))
   }
@@ -238,14 +248,16 @@ struct FineTunesDeleteCommand: AsyncParsableCommand {
   @Option(help: "The fine-tuned model to delete.")
   var modelId: Model.ID
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
+    let client = client.new()
     
     let result = try await client.call(FineTunes.Delete(id: modelId))
     
-    let format = config.format()
+    let format = format.new()
     format.print(title: "Fine-Tune Deleted")
     format.print(label: "ID", value: result.id)
     format.print(label: "Deleted", value: result.deleted ? "yes" : "no")

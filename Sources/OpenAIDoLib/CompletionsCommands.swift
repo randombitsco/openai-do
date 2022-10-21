@@ -118,7 +118,9 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
   
   @OptionGroup var toJson: ToJSONFrom<Completion>
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   /// Parses the logit bias string into a dictionary of token IDs to biases.
   /// - Returns: A dictionary of token IDs to biases, or `nil` if none provided.
@@ -140,8 +142,8 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
   }
   
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
     
     let completions = Completions.Create(
       model: modelId,

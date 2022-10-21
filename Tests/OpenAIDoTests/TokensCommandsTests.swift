@@ -41,7 +41,7 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
     XCTAssertEqual(cmd.text, "Hello, world!")
     XCTAssertFalse(cmd.toJson.enabled)
     XCTAssertNil(cmd.toJson.style)
-    XCTAssertFalse(cmd.verbose)
+    XCTAssertFalse(cmd.format.verbose)
 
     try await cmd.run()
     
@@ -61,7 +61,7 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
     XCTAssertEqual(cmd.text, "Hello, world!")
     XCTAssertTrue(cmd.toJson.enabled)
     XCTAssertNil(cmd.toJson.style)
-    XCTAssertFalse(cmd.verbose)
+    XCTAssertFalse(cmd.format.verbose)
 
     try await cmd.run()
     
@@ -79,7 +79,7 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
     XCTAssertEqual(cmd.text, "Hello, world!")
     XCTAssertTrue(cmd.toJson.enabled)
     XCTAssertEqual(cmd.toJson.style, .pretty)
-    XCTAssertFalse(cmd.verbose)
+    XCTAssertFalse(cmd.format.verbose)
 
     try await cmd.run()
     

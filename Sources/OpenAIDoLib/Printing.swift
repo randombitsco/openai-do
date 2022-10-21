@@ -24,31 +24,40 @@ struct Format {
   }
   
   /// The basic ``Format``, no indentation, not verbose.
-  static let `default` = Format()
+  static let `default` = Format(indent: "", showVerbose: false, showDebug: false)
   
   /// A ``Format`` which is verbose by default.
-  static let verbose = Format(showVerbose: true)
+  static let verbose = Format(indent: "", showVerbose: true, showDebug: false)
+  
+  /// A ``Format`` which is showing logs by default.
+  static let debug = Format(indent: "", showVerbose: false, showDebug: true)
   
   /// Returns a new ``Format`` with an `indent` of the specified number of spaces.
   ///
   /// - Parameter count: The number of spaces to indent by.
   /// - Returns a new ``Format`` with additional indentation.
   static func indent(by count: Int) -> Format {
-    Format(indent: String(repeating: " ", count: count))
+    Format(indent: String(repeating: " ", count: count), showVerbose: false, showDebug: false)
   }
   
   /// The current indentation ``String``.
   let indent: String
   
-  /// If true, verbose values will be output.
+  /// If `true`, verbose values will be output.
   let showVerbose: Bool
+  
+  /// If `true`, logs will be output.
+  let showDebug: Bool
   
   /// Creates a new ``Format``.
   ///
   /// - Parameter indent: The indent ``String``.
-  init(indent: String = "", showVerbose: Bool = false) {
+  /// - Parameter showVerbose: If `true`, verbose items will be shown.
+  /// - Parameter showDebug: If `true`, debug logs will be shown.
+  init(indent: String, showVerbose: Bool, showDebug: Bool) {
     self.indent = indent
     self.showVerbose = showVerbose
+    self.showDebug = showDebug
   }
   
   /// Creates a new ``Format`` with the indentation increased by the specified `count`.
@@ -56,13 +65,21 @@ struct Format {
   /// - Parameter count: the number of spaces to increase the increment by.
   /// - Returns the new ``Format`` with the indentation increased.
   func indented(by count: Int) -> Format {
-    Format(indent: indent.appending(String(repeating: " ", count: count)), showVerbose: showVerbose)
+    Format(indent: indent.appending(String(repeating: " ", count: count)), showVerbose: showVerbose, showDebug: showDebug)
   }
   
   /// A ``Format`` with the same settings, where ``showVerbose`` is `true`.
   var verbose: Format {
     guard showVerbose else {
-      return Format(indent: indent, showVerbose: true)
+      return Format(indent: indent, showVerbose: true, showDebug: showDebug)
+    }
+    return self
+  }
+  
+  /// A ``Format`` with the same settings, where `showDebug` is `true`.
+  var debug: Format {
+    guard showDebug else {
+      return Format(indent: indent, showVerbose: showVerbose, showDebug: true)
     }
     return self
   }
@@ -152,11 +169,12 @@ struct Format {
     print(text: "∙ \(text)")
   }
   
-  /// Prints the provided text as a log entry.
+  /// Prints the provided text as a log entry, if ``showDebug`` is `true`.
   ///
   /// - Parameter log: The text to log.
-  func print(log text: CustomStringConvertible) {
-    print(text: ForegroundColor(.yellow) { "> \(text)" } )
+  func print(log text: @autoclosure () -> CustomStringConvertible) {
+    guard showDebug else { return }
+    print(text: ForegroundColor(.yellow) { "> \(text())" } )
   }
 
   /// Prints a list of `T` values, using the provided `printer`.

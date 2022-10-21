@@ -33,11 +33,13 @@ struct EmbeddingsCommand: AsyncParsableCommand {
   """)
   var input: String
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
 
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
 
     let result = try await client.call(Embeddings.Create(
       model: modelId, 

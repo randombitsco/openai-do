@@ -40,11 +40,13 @@ struct ModelsListCommand: AsyncParsableCommand {
   @Option(help: "A text value the model name must contains.")
   var contains: String?
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
     
     var models = try await client.call(Models.List()).data
     
@@ -94,11 +96,13 @@ struct ModelsDetailCommand: AsyncParsableCommand {
   @Option(help: "The model ID.")
   var modelId: Model.ID
   
-  @OptionGroup var config: Config  
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
     
     let detail = try await client.call(Models.Detail(id: modelId))
     

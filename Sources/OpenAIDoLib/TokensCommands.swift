@@ -60,15 +60,11 @@ struct TokensEncodeCommand: AsyncParsableCommand {
   
   /// Options for outputing in JSON format.
   @OptionGroup var toJson: ToJSONFrom<[Int]>
-
-  @Flag(help: "Output more details.")
-  var verbose: Bool = false
   
-  var format: Format {
-    verbose ? .verbose : .default
-  }
+  @OptionGroup var format: FormatConfig
   
   mutating func run() async throws {
+    let format = format.new()
     let encoder = try TokenEncoder()
     let tokens = try encoder.encode(text: text)
 
@@ -110,12 +106,7 @@ struct TokensDecodeCommand: AsyncParsableCommand {
   
   @OptionGroup var toJson: ToJSONFrom<String>
   
-  @Flag(help: "Output more details.")
-  var verbose: Bool = false
-  
-  var format: Format {
-    verbose ? .verbose : .default
-  }
+  @OptionGroup var format: FormatConfig
     
   mutating func validate() throws {
     try fromJson.validate {
@@ -160,6 +151,8 @@ struct TokensDecodeCommand: AsyncParsableCommand {
     
     let encoder = try TokenEncoder()
     let text = try encoder.decode(tokens: tokens)
+    
+    let format = format.new()
     
     if toJson.enabled {
       format.print(text: try toJson.encode(value: text))

@@ -2,7 +2,8 @@ import ArgumentParser
 import Foundation
 import OpenAIBits
 
-struct Config: ParsableArguments {
+/// Describes common configuration values for commands dealing with the API.
+struct ClientConfig: ParsableArguments {
   /// Attempts to find the OpenAI API Key from the `"OPENAI_API_KEY"` environment variable.
   static func findApiKeyInEnvironment() -> String? {
     ProcessInfo.processInfo.environment["OPENAI_API_KEY"]
@@ -16,12 +17,12 @@ struct Config: ParsableArguments {
   /// A `func` value which attempts to find an OpenAI API Key from the environment.
   /// By default, it uses ``Config/findApiKeyInEnvironment()``.
   /// Override this provide an alternate default.
-  static var findApiKey: () -> String? = Config.findApiKeyInEnvironment
+  static var findApiKey: () -> String? = ClientConfig.findApiKeyInEnvironment
   
   /// A `func` value which attempts to find an OpenAI Organization Key from the environment.
   /// By default, it uses ``Config/findOrgKeyInEnvironment()``.
   /// Override this provide an alternate default.
-  static var findOrgKey: () -> String? = Config.findOrgKeyInEnvironment
+  static var findOrgKey: () -> String? = ClientConfig.findOrgKeyInEnvironment
   
   @Option(help: "The OpenAI API Key. If not provided, uses the 'OPENAI_API_KEY' environment variable.")
   var apiKey: String?
@@ -29,45 +30,34 @@ struct Config: ParsableArguments {
   @Option(help: "The OpenAI Organisation key. If not provided, uses the 'OPENAI_ORG_KEY' environment variable.")
   var orgKey: String?
   
-  @Flag(help: "Output more details.")
-  var verbose: Bool = false
+  @OptionGroup var format: FormatConfig
   
-  @Flag(help: "Output debugging information.")
-  var debug: Bool = false
-  
-  /// Finds the specified OpenAI API Key. It will first check the ``apiKey`` `Option`, and if not provided it
-  /// will try the static ``Config/findApiKey`` function, which by default will look for the `OPENAI_API_KEY`
-  /// environment variable.
+  /// Finds the specified OpenAI API Key. It will first check the ``apiKey`` `Option`, and if not provided it will try the static ``Config/findApiKey`` function, which by default will look for the `OPENAI_API_KEY` environment variable.
   ///
   /// - Returns The API Key, or `nil` if unavailable.
   func findApiKey() -> String? {
-    apiKey ?? Config.findApiKey()
+    apiKey ?? ClientConfig.findApiKey()
   }
   
-  /// Finds the specified OpenAI Organization Key. It will first check the ``orgKey`` `Option`, and if not provided it
-  /// will try the static ``Config/findOrgKey`` function, which by default will look for the `OPENAI_ORG_KEY`
-  /// environment variable.
+  /// Finds the specified OpenAI Organization Key. It will first check the ``orgKey`` `Option`, and if not provided it will try the static ``Config/findOrgKey`` function, which by default will look for the `OPENAI_ORG_KEY` environment variable.
   ///
   /// - Returns The Org Key, or `nil` if unavailable.
   func findOrgKey() -> String? {
-    orgKey ?? Config.findOrgKey()
+    orgKey ?? ClientConfig.findOrgKey()
   }
   
-  /// Configures a ``Client/Logger`` function, which if in ``debug`` mode, will print, otherwise
+  /// Configures a ``Client/Logger`` function, which if in ``debug`` mode, will print, otherwise returns `nil`.
   var log: Client.Logger? {
-    guard debug else {
+    guard format.debug else {
       return nil
     }
-    return { format().print(log: $0) }
+    return { format.new().print(log: $0) }
   }
   
-  func client() -> Client {
+  /// Creates a new ``Client`` based on the current configuration.
+  /// - Returns: The new ``Client`` instance.
+  func new() -> Client {
     Client(apiKey: findApiKey() ?? "NO API KEY PROVIDED", organization: findOrgKey(), log: log)
-  }
-  
-  /// The default format, given the config.
-  func format() -> Format {
-    verbose ? .verbose : .default
   }
   
   mutating func validate() throws {

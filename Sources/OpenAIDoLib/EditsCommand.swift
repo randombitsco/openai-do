@@ -46,11 +46,13 @@ struct EditsCommand: AsyncParsableCommand {
   """)
   var topP: Percentage?
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
     
     let edits = Edits.Create(
       model: modelId.modelId,

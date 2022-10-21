@@ -10,7 +10,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   func testSimple() async throws {
     var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "ABC")
         
-    XCTAssertEqual(cmd.config.findApiKey(), apiKey)
+    XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.modelId, "foobar")
     XCTAssertEqual(cmd.prompt, "ABC")
     
@@ -19,7 +19,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     //    try await cmd.run()
     try await XCTAssertExpectOpenAICall {
       Completions.Create(model: "foobar", prompt: "ABC")
-    } returning: {
+    } response: {
       Completion(
         id: "success", created: now, model: "foobar",
         choices: [
@@ -27,7 +27,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         ],
         usage: .init(promptTokens: 2, completionTokens: 2, totalTokens: 4)
       )
-    } whileDoing: {
+    } doing: {
       try await cmd.validate()
       try await cmd.run()
 
@@ -49,7 +49,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   func testBlankText() async throws {
     var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "ABC")
         
-    XCTAssertEqual(cmd.config.findApiKey(), apiKey)
+    XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.modelId, "foobar")
     XCTAssertEqual(cmd.prompt, "ABC")
     
@@ -58,7 +58,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     //    try await cmd.run()
     try await XCTAssertExpectOpenAICall {
       Completions.Create(model: "foobar", prompt: "ABC")
-    } returning: {
+    } response: {
       Completion(
         id: "success", created: now, model: "foobar",
         choices: [
@@ -66,7 +66,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         ],
         usage: .init(promptTokens: 2, completionTokens: 2, totalTokens: 4)
       )
-    } whileDoing: {
+    } doing: {
       try await cmd.validate()
       try await cmd.run()
 
@@ -96,7 +96,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     try await XCTAssertExpectOpenAICall {
       Completions.Create(model: "foobar", prompt: "ABC", n: 2)
-    } returning: {
+    } response: {
       .init(
         id: "success", created: now, model: "foobar",
         choices: [
@@ -105,7 +105,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         ],
         usage: .init(promptTokens: 1, completionTokens: 2, totalTokens: 3)
       )
-    } whileDoing: {
+    } doing: {
       try await cmd.validate()
       try await cmd.run()
       
@@ -144,7 +144,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     try await XCTAssertExpectOpenAICall {
       Completions.Create(model: "foobar", prompt: "ABC", n: 2)
-    } returning: {
+    } response: {
       .init(
         id: "success", created: now, model: "foobar",
         choices: [
@@ -153,7 +153,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         ],
         usage: .init(promptTokens: 1, completionTokens: 2, totalTokens: 3)
       )
-    } whileDoing: {
+    } doing: {
       try await cmd.validate()
       try await cmd.run()
       
@@ -196,7 +196,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     try await XCTAssertExpectOpenAICall {
       Completions.Create(model: "foobar", prompt: "ABC", logitBias: [1234:10])
-    } returning: {
+    } response: {
       .init(
         id: "success", created: now, model: "foobar",
         choices: [
@@ -204,7 +204,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         ],
         usage: .init(promptTokens: 1, completionTokens: 2, totalTokens: 3)
       )
-    } whileDoing: {
+    } doing: {
       try await cmd.validate()
       try await cmd.run()
       
@@ -234,7 +234,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     try await XCTAssertExpectOpenAICall {
       Completions.Create(model: "foobar", prompt: "ABC", logitBias: [1234:10, 5678:20])
-    } returning: {
+    } response: {
       .init(
         id: "success", created: now, model: "foobar",
         choices: [
@@ -242,7 +242,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         ],
         usage: .init(promptTokens: 1, completionTokens: 2, totalTokens: 3)
       )
-    } whileDoing: {
+    } doing: {
       try await cmd.validate()
       try await cmd.run()
       
@@ -276,7 +276,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     try await XCTAssertExpectOpenAICall {
       Completions.Create(model: "foobar", prompt: "ABC")
-    } returning: {
+    } response: {
       .init(
         id: "success", created: now, model: "foobar",
         choices: [
@@ -284,7 +284,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         ],
         usage: .init(promptTokens: 1, completionTokens: 2, totalTokens: 3)
       )
-    } whileDoing: {
+    } doing: {
       try await cmd.validate()
       try await cmd.run()
       
@@ -321,7 +321,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     try await XCTAssertExpectOpenAICall {
       Completions.Create(model: "foobar", prompt: "ABC", n: 2)
-    } returning: {
+    } response: {
       .init(
         id: "success", created: now, model: "foobar",
         choices: [
@@ -330,7 +330,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         ],
         usage: .init(promptTokens: 1, completionTokens: 5, totalTokens: 6)
       )
-    } whileDoing: {
+    } doing: {
       try await cmd.validate()
       try await cmd.run()
       
@@ -401,7 +401,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         logitBias: [50256: -100],
         user: "jblogs"
       )
-    } returning: {
+    } response: {
       Completion(
         id: "success", created: now, model: "foobar",
         choices: [
@@ -409,7 +409,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         ],
         usage: .init(promptTokens: 2, completionTokens: 2, totalTokens: 4)
       )
-    } whileDoing: {
+    } doing: {
       try await cmd.validate()
       try await cmd.run()
       
@@ -431,8 +431,8 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   func testVerbose() async throws {
     var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "--verbose", "ABC", "--logprobs", "2")
         
-    XCTAssertEqual(cmd.config.findApiKey(), apiKey)
-    XCTAssertEqual(cmd.config.verbose, true)
+    XCTAssertEqual(cmd.client.findApiKey(), apiKey)
+    XCTAssertEqual(cmd.client.format.verbose, true)
     XCTAssertEqual(cmd.modelId, "foobar")
     XCTAssertEqual(cmd.prompt, "ABC")
     
@@ -441,7 +441,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     //    try await cmd.run()
     try await XCTAssertExpectOpenAICall {
       Completions.Create(model: "foobar", prompt: "ABC", logprobs: 2)
-    } returning: {
+    } response: {
       Completion(
         id: "success", created: now, model: "foobar",
         choices: [
@@ -458,7 +458,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         ],
         usage: .init(promptTokens: 2, completionTokens: 2, totalTokens: 4)
       )
-    } whileDoing: {
+    } doing: {
       try await cmd.validate()
       try await cmd.run()
 

@@ -16,11 +16,13 @@ struct ModerationsCommand: AsyncParsableCommand {
   @Flag(help: "Uses the stable classifier model, which updates less frequently. Accuracy may be slightly lower than 'latest'.")
   var stable: Bool = false
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
 
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
     
     let response = try await client.call(Moderations.Create(
       input: .string(input),

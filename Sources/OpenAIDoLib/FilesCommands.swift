@@ -26,11 +26,13 @@ struct FilesListCommand: AsyncParsableCommand {
     abstract: "List available files."
   )
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
     
     let files = try await client.call(Files.List())
         
@@ -61,11 +63,13 @@ struct FilesUploadCommand: AsyncParsableCommand {
   """)
   var purpose: Files.Upload.Purpose
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
     
     let fileURL = URL(fileURLWithPath: input)
     
@@ -87,11 +91,13 @@ struct FilesDetailCommand: AsyncParsableCommand {
   @Option(name: [.customLong("id"), .long], help: "The file ID.")
   var fileId: File.ID
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
 
     let file = try await client.call(Files.Detail(id: fileId))
     
@@ -116,11 +122,13 @@ struct FilesDownloadCommand: AsyncParsableCommand {
   """, completion: .file())
   var output: String?
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
     
     let result = try await client.call(Files.Content(id: fileId))
     
@@ -151,11 +159,13 @@ struct FilesDeleteCommand: AsyncParsableCommand {
   @Option(name: [.customLong("id"), .long], help: "The file ID.")
   var fileId: File.ID
   
-  @OptionGroup var config: Config
+  @OptionGroup var client: ClientConfig
+  
+  var format: FormatConfig { client.format }
   
   mutating func run() async throws {
-    let client = config.client()
-    let format = config.format()
+    let client = client.new()
+    let format = format.new()
     
     let result = try await client.call(Files.Delete(id: fileId))
     
