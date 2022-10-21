@@ -23,10 +23,30 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
     abstract: "Creates a completion for the provided prompt and parameters."
   )
   
-  @Option(help: """
-  The ID of the model to prompt. You can use `\(COMMAND_NAME) models list` to see all of your available models.
-  """)
-  var modelId: Model.ID
+  enum CompletionModel: String, ModelAlias {
+    case ada
+    case babbage
+    case curie
+    case davinci
+    case codex
+    
+    var modelId: Model.ID {
+      switch self {
+      case .ada: return .text_ada_001
+      case .babbage: return .text_babbage_001
+      case .curie: return .text_curie_001
+      case .davinci: return .text_davinci_002
+      case .codex: return .code_davinci_001
+      }
+    }    
+  }
+  
+  @OptionGroup var model: ModelConfig<CompletionModel>
+  
+//  @Option(help: """
+//  The ID of the model to prompt. You can use `\(COMMAND_NAME) models list` to see all of your available models.
+//  """)
+//  var modelId: Model.ID
   
   @Option(help: "The suffix that comes after a completion of inserted text.")
   var suffix: String?
@@ -146,7 +166,7 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
     let format = format.new()
     
     let completions = Completions.Create(
-      model: modelId,
+      model: try model.findModelId(),
       prompt: .string(prompt),
       suffix: suffix,
       maxTokens: maxTokens,

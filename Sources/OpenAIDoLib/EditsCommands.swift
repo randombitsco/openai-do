@@ -7,15 +7,41 @@ import OpenAIBits
 struct EditsCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "edits",
+    abstract: "Commands relating to edits.",
+    subcommands: [
+      EditsCreateCommand.self,
+    ]
+  )
+}
+
+// MARK: create
+
+struct EditsCreateCommand: AsyncParsableCommand {
+  static var configuration = CommandConfiguration(
+    commandName: "create",
     abstract: "Given a prompt and an instruction, the model will return an edited version of the prompt."
   )
   
-  @Option(name: .long, help: """
-  Either 'davinci', or 'codex', or the full ID of the model to prompt.
+  enum EditModel: String, ModelAlias {
+    case davinci
+    case codex
+    
+    var modelId: Model.ID {
+      switch self {
+      case .davinci: return .text_davinci_edit_001
+      case .codex: return .code_davinci_edit_001
+      }
+    }
+  }
   
-  Must be an 'edit' model (use `models list --edit`).
-  """)
-  var modelId: EditsModelID
+  @OptionGroup var model: ModelConfig<EditModel>
+  
+//  @Option(name: .long, help: """
+//  Either 'davinci', or 'codex', or the full ID of the model to prompt.
+//
+//  Must be an 'edit' model (use `models list --edit`).
+//  """)
+//  var modelId: EditsModelID
   
   @Argument(help: """
   The input text to use as a starting point for the edit. (Defaults to '')
@@ -55,7 +81,7 @@ struct EditsCommand: AsyncParsableCommand {
     let format = format.new()
     
     let edits = Edits.Create(
-      model: modelId.modelId,
+      model: try model.findModelId(),
       input: input,
       instruction: instruction,
       n: n,
@@ -74,7 +100,7 @@ struct EditsCommand: AsyncParsableCommand {
   }
 }
 
-extension EditsCommand {
+extension EditsCreateCommand {
   /// Provides an alias for common "edit" models.
   enum EditsModelID: ExpressibleByArgument {
     case davinci
@@ -95,9 +121,9 @@ extension EditsCommand {
     var modelId: Model.ID {
       switch self {
       case .davinci:
-        return "edits-davinci-002"
+        return "text-davinci-edit-001"
       case .codex:
-        return "edits-davinci-codex-002"
+        return "code-davinci-edit-001"
       case .id(let id):
         return .init(id)
       }
