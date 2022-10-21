@@ -207,7 +207,11 @@ struct Format {
     printer(indented(by: 2))(item)
   }
 
-  func print<T: CustomStringConvertible>(label: String, value: T) {
+  func print<T: CustomStringConvertible>(label: String, value: T, verbose: Bool = false) {
+    guard !verbose || showVerbose else {
+      return
+    }
+    
     print(text: Prism {
       Bold { "\(label):" }
       String(describing: value)
@@ -234,7 +238,11 @@ struct Format {
       }
     }
   }
-  
+
+  func print(label: String, value: Bool, verbose: Bool = false) {
+    print(label: label, value: value.yesNo, verbose: verbose)
+  }
+
   func print(label: String, value: Bool?, verbose: Bool = false, whenNil: WhenNil = .skip) {
     print(label: label, value: value?.yesNo, verbose: verbose, whenNil: whenNil)
   }
@@ -285,7 +293,6 @@ struct Format {
   }
 
   func print(fineTune: FineTune) {
-    print(label: "ID", value: fineTune.id)
     print(label: "Model", value: fineTune.model)
     print(label: "Fine-Tuned Model", value: fineTune.fineTunedModel)
     print(label: "Organization", value: fineTune.organizationId, verbose: true)
@@ -399,7 +406,6 @@ struct Format {
     print(label: "Allow View", value: permission.allowView)
     print(label: "Allow Logprobs", value: permission.allowLogprobs)
     print(label: "Allow Fine-Tuning", value: permission.allowFineTuning)
-    print(label: "Allow Create Engine", value: permission.allowCreateEngine, verbose: true)
     print(label: "Allow Sampling", value: permission.allowSampling, verbose: true)
     print(label: "Allow Search Indices", value: permission.allowSearchIndices, verbose: true)
     print(label: "Organization", value: permission.organization, verbose: true)

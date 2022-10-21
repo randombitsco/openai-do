@@ -3,6 +3,8 @@ import Foundation
 import OpenAIBits
 import Parsing
 
+// MARK: completions
+
 struct CompletionsCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "completions",
@@ -12,6 +14,8 @@ struct CompletionsCommand: AsyncParsableCommand {
     ]
   )
 }
+
+// MARK: create
 
 struct CompletionsCreateCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
@@ -72,7 +76,7 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
   @Option(help: """
   A sequence where the API will stop generating further tokens. The returned text will not contain the stop sequence.
   """)
-  var stop: String?
+  var stop: Completions.Stop?
   
   @Option(parsing: .unconditional, help: """
   Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. (Defaults to 0)
@@ -139,8 +143,6 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
     let client = config.client()
     let format = config.format()
     
-    let stop: [String]? = self.stop != nil ? [self.stop!] : nil
-    
     let completions = Completions.Create(
       model: modelId,
       prompt: .string(prompt),
@@ -172,6 +174,16 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
   }
 }
 
+// MARK: Completions.Create.Stop
+
+extension Completions.Stop: ExpressibleByArgument {
+  public init?(argument: String) {
+    self.init(argument)
+  }
+}
+
+// MARK: logitBias Parsing
+
 extension Token {
   static let parser = Parse(Token.init(_:)) {
     Int.parser(of: Substring.self)
@@ -187,7 +199,7 @@ extension Decimal {
     .eraseToAnyParser()
   }
 }
-    
+
 let tokenBiasParser = Parse {
   Token.parser
   ":"

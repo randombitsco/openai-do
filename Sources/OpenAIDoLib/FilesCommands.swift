@@ -69,7 +69,7 @@ struct FilesUploadCommand: AsyncParsableCommand {
     
     let fileURL = URL(fileURLWithPath: input)
     
-    let result = try await client.call(Files.Upload(purpose: purpose, file: fileURL))
+    let result = try await client.call(Files.Upload(purpose: purpose, source: fileURL))
     
     format.print(title: "File Detail")
     format.print(file: result)

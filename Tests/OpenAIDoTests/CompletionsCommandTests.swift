@@ -383,7 +383,6 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     let now = Date()
     
-    //    try await cmd.run()
     try await XCTAssertExpectOpenAICall {
       Completions.Create(
         model: "foobar",
@@ -393,10 +392,9 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         temperature: 0.5,
         topP: 0.6,
         n: 2,
-//        stream: false,
         logprobs: 1,
         echo: true,
-        stop: ["bar"],
+        stop: .init("bar"),
         presencePenalty: 2.0,
         frequencyPenalty: -2.0,
         bestOf: 3,
