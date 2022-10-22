@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "Files",
+        "repositoryURL": "https://github.com/JohnSundell/Files",
+        "state": {
+          "branch": null,
+          "revision": "d273b5b7025d386feef79ef6bad7de762e106eaf",
+          "version": "4.2.0"
+        }
+      },
+      {
         "package": "MultipartForm",
         "repositoryURL": "https://github.com/davbeck/MultipartForm",
         "state": {
@@ -51,7 +60,7 @@
         "repositoryURL": "/Users/david/Development/Projects/randombitsco/swift-openai-bits",
         "state": {
           "branch": "main",
-          "revision": "c091cefb5e19583ab9a7c9cf9be5a4492d2b757f",
+          "revision": "91ec4d6a7306ab9efb736c26a36597fd80106c64",
           "version": null
         }
       },

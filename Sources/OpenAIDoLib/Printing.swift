@@ -147,6 +147,7 @@ struct Format {
   /// - Parameter title: The title text ``String``.
   func print(title text: CustomStringConvertible) {
     print(text: ForegroundColor(.green) { Bold { String(describing: text) } })
+    println()
   }
   
   /// Prints the provided text as a "subtitle".
@@ -301,7 +302,6 @@ struct Format {
   }
 
   func print(file: File) {
-    print(label: "ID", value: file.id)
     print(label: "Filename", value: file.filename)
     print(label: "Purpose", value: file.purpose)
     print(label: "Bytes", value: file.bytes)
