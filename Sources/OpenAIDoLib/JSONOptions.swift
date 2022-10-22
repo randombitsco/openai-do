@@ -87,11 +87,6 @@ struct ToJSONFrom<T: Encodable>: ParsableArguments {
   If outputting to JSON, how should it be output?
   """)
   var style: Style?
-  
-//  enum CodingKeys: String, CodingKey {
-//    case enabled = "to-json"
-//    case style
-//  }
 }
 
 extension ToJSONFrom {
