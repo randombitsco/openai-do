@@ -8,10 +8,10 @@ import XCTest
 final class TokensCountCommandTests: OpenAIDoTestCase {
   func testCount() async throws {
     var cmd: TokensCountCommand = try parse(
-      "tokens", "count", "Hello, world!"
+      "tokens", "count", "-i", "Hello, world!"
     )
     
-    XCTAssertEqual(cmd.text, "Hello, world!")
+    XCTAssertEqual(cmd.input, "Hello, world!")
     
     try await cmd.run()
     
@@ -35,10 +35,10 @@ final class TokensCountCommandTests: OpenAIDoTestCase {
 final class TokensEncodeCommandTests: OpenAIDoTestCase {
   func testEncode() async throws {
     var cmd: TokensEncodeCommand = try parse(
-      "tokens", "encode", "Hello, world!"
+      "tokens", "encode", "-i", "Hello, world!"
     )
     
-    XCTAssertEqual(cmd.text, "Hello, world!")
+    XCTAssertEqual(cmd.input, "Hello, world!")
     XCTAssertFalse(cmd.toJson.enabled)
     XCTAssertNil(cmd.toJson.style)
     XCTAssertFalse(cmd.format.verbose)
@@ -55,10 +55,10 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
 
   func testEncodeToJSON() async throws {
     var cmd: TokensEncodeCommand = try parse(
-      "tokens", "encode", "Hello, world!", "--to-json"
+      "tokens", "encode", "-i", "Hello, world!", "--to-json"
     )
 
-    XCTAssertEqual(cmd.text, "Hello, world!")
+    XCTAssertEqual(cmd.input, "Hello, world!")
     XCTAssertTrue(cmd.toJson.enabled)
     XCTAssertNil(cmd.toJson.style)
     XCTAssertFalse(cmd.format.verbose)
@@ -73,10 +73,10 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
   
   func testEncodeToJSONVerbose() async throws {
     var cmd: TokensEncodeCommand = try parse(
-      "tokens", "encode", "Hello, world!", "--to-json", "--pretty"
+      "tokens", "encode", "-i", "Hello, world!", "--to-json", "--pretty"
     )
 
-    XCTAssertEqual(cmd.text, "Hello, world!")
+    XCTAssertEqual(cmd.input, "Hello, world!")
     XCTAssertTrue(cmd.toJson.enabled)
     XCTAssertEqual(cmd.toJson.style, .pretty)
     XCTAssertFalse(cmd.format.verbose)
@@ -100,7 +100,7 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
 final class TokensDecodeCommandTests: OpenAIDoTestCase {
   func testDecodeIntegers() async throws {
     var cmd: TokensDecodeCommand = try parse(
-      "tokens", "decode", "15496", "11", "995", "0"
+      "tokens", "decode", "-i", "15496", "11", "995", "0"
     )
 
     XCTAssertEqual(cmd.input, ["15496", "11", "995", "0"])
@@ -114,14 +114,17 @@ final class TokensDecodeCommandTests: OpenAIDoTestCase {
     XCTAssertNoDifference(printed, """
     Token Decoding
     
-    Text: Hello, world!
+    Text:
+    \(Format.border("Hello, world!".count))
+    Hello, world!
+    \(Format.border("Hello, world!".count))
     
     """)
   }
 
   func testDecodeFromJSON() async throws {
     var cmd: TokensDecodeCommand = try parse(
-      "tokens", "decode", "--from-json", "[15496, 11, 995, 0]"
+      "tokens", "decode", "--from-json", "-i", "[15496, 11, 995, 0]"
     )
 
     XCTAssertEqual(cmd.input, ["[15496, 11, 995, 0]"])
@@ -135,14 +138,17 @@ final class TokensDecodeCommandTests: OpenAIDoTestCase {
     XCTAssertNoDifference(printed, """
     Token Decoding
     
-    Text: Hello, world!
+    Text:
+    \(Format.border("Hello, world!".count))
+    Hello, world!
+    \(Format.border("Hello, world!".count))
     
     """)
   }
   
   func testDecodeToJSON() async throws {
     var cmd: TokensDecodeCommand = try parse(
-      "tokens", "decode", "--from-json", "[15496, 11, 995, 0]", "--to-json"
+      "tokens", "decode", "--from-json", "-i", "[15496, 11, 995, 0]", "--to-json"
     )
 
     XCTAssertEqual(cmd.input, ["[15496, 11, 995, 0]"])

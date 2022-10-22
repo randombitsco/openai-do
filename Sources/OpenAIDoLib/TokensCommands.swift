@@ -25,12 +25,12 @@ struct TokensCountCommand: AsyncParsableCommand {
     discussion: "This is performed locally, based on the published GPT-2/3 token encoder."
   )
   
-  @Argument(help: "The text to estimate tokens for.")
-  var text: String
+  @Option(name: .shortAndLong, help: "The text to estimate tokens for.")
+  var input: String
   
   mutating func run() async throws {
     let encoder = try TokenEncoder()
-    let count = try encoder.encode(text: text).count
+    let count = try encoder.encode(text: input).count
     
     let format = Format.default
     
@@ -54,8 +54,8 @@ struct TokensEncodeCommand: AsyncParsableCommand {
     """
   )
   
-  @Argument(help: "The text to encode into tokens.")
-  var text: String
+  @Option(name: .shortAndLong, help: "The text to encode into tokens.")
+  var input: String
   
   /// Options for outputing in JSON format.
   @OptionGroup var toJson: ToJSONFrom<[Int]>
@@ -65,7 +65,7 @@ struct TokensEncodeCommand: AsyncParsableCommand {
   mutating func run() async throws {
     let format = format.new()
     let encoder = try TokenEncoder()
-    let tokens = try encoder.encode(text: text)
+    let tokens = try encoder.encode(text: input)
 
     if toJson.enabled {
       format.print(text: try toJson.encode(value: tokens))
@@ -88,14 +88,14 @@ struct TokensDecodeCommand: AsyncParsableCommand {
     """
   )
   
-  @Argument(help: """
+  @Option(name: .shortAndLong, parsing: .upToNextOption, help: """
   The tokens to decode into text. The default input is a space-separated list of integers:
   
-    > \(COMMAND_NAME) tokens decode 15496 11 995 0
+    > \(COMMAND_NAME) tokens decode -i 15496 11 995 0
   
   Alternately, use `--from-json` to provide a JSON text value:
   
-    > \(COMMAND_NAME) tokens decode --from-json '[15496, 11, 995, 0]'
+    > \(COMMAND_NAME) tokens decode --from-json -i '[15496, 11, 995, 0]'
   
   """)
   var input: [String]
@@ -110,13 +110,13 @@ struct TokensDecodeCommand: AsyncParsableCommand {
     try fromJson.validate {
       input
     } example: {
-      "tokens decode --from-json '[15496 11 995 0]'"
+      "tokens decode --from-json -i '[15496 11 995 0]'"
     } ifDisabled: {
       guard !input.isEmpty else {
         throw ValidationError {
           "Specify at least one integer value to decode."
         } example: {
-          "tokens decode 15496 11 995 0"
+          "tokens decode -i 15496 11 995 0"
         }
       }
     }
@@ -126,24 +126,18 @@ struct TokensDecodeCommand: AsyncParsableCommand {
   
   mutating func run() async throws {
     let tokens = try fromJson.decode {
-      guard let text = input.first else {
-        throw ValidationError {
-          "Expected a single text value, but got \(input.count)."
-        } example: {
-          "tokens decode --from-json '[15496, 11, 995, 0]'"
-        }
+      try input.first  ?! ValidationError {
+        "Expected a single text value, but got \(input.count)."
+      } example: {
+        "tokens decode --from-json -i '[15496, 11, 995, 0]'"
       }
-      return text
     } otherwise: {
       try input.map({ text in
-        guard let int = Int(text, radix: 10) else {
-          throw ValidationError {
-            "Expected an integer, got \"\(text)\"."
-          } example: {
-            "tokens decode 15496 11 995 0"
-          }
+        try Int(text, radix: 10) ?! ValidationError {
+          "Expected an integer, got \"\(text)\"."
+        } example: {
+          "tokens decode -i 15496 11 995 0"
         }
-        return int
       })
     }
     
