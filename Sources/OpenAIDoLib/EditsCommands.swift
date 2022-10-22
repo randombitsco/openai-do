@@ -99,35 +99,3 @@ struct EditsCreateCommand: AsyncParsableCommand {
     format.print(usage: result.usage)
   }
 }
-
-extension EditsCreateCommand {
-  /// Provides an alias for common "edit" models.
-  enum EditsModelID: ExpressibleByArgument {
-    case davinci
-    case codex
-    case id(String)
-
-    init?(argument: String) {
-      switch argument {
-      case "davinci":
-        self = .davinci
-      case "codex":
-        self = .codex
-      default:
-        self = .id(argument)
-      }
-    }
-    
-    var modelId: Model.ID {
-      switch self {
-      case .davinci:
-        return "text-davinci-edit-001"
-      case .codex:
-        return "code-davinci-edit-001"
-      case .id(let id):
-        return .init(id)
-      }
-    }
-  }
-  
-}
