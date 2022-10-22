@@ -35,7 +35,6 @@ struct TokensCountCommand: AsyncParsableCommand {
     let format = Format.default
     
     format.print(title: "Token Count")
-    format.println()
     format.print(label: "Count", value: count)
   }
 }
@@ -72,7 +71,6 @@ struct TokensEncodeCommand: AsyncParsableCommand {
       format.print(text: try toJson.encode(value: tokens))
     } else {
       format.print(title: "Token Encoding")
-      format.println()
       format.print(label: "Tokens", value: tokens)
       format.print(label: "Count", value: tokens.count, verbose: true)
     }
@@ -158,7 +156,6 @@ struct TokensDecodeCommand: AsyncParsableCommand {
       format.print(text: try toJson.encode(value: text))
     } else {
       format.print(title: "Token Decoding")
-      format.println()
       format.print(label: "Text", value: text)
     }
   }

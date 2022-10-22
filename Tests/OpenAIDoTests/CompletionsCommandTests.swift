@@ -33,6 +33,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
 
       XCTAssertNoDifference(printed, """
       Create Completions
+      
       Model: foobar
       Text:
       \(Format.border("DEF".count))
@@ -72,6 +73,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
 
       XCTAssertNoDifference(printed, """
       Create Completions
+      
       Model: foobar
       Text:
       \(Format.border("".count))
@@ -111,6 +113,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       
       XCTAssertNoDifference(printed, """
       Create Completions
+      
       Model: foobar
       Choices:
       #1:
@@ -210,6 +213,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       
       XCTAssertNoDifference(printed, """
       Create Completions
+      
       Model: foobar
       Text:
       \(Format.border("DEF".count))
@@ -248,6 +252,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       
       XCTAssertNoDifference(printed, """
       Create Completions
+      
       Model: foobar
       Text:
       \(Format.border("DEF".count))
@@ -290,6 +295,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       
       XCTAssertNoDifference(printed, """
       Create Completions
+      
       Model: foobar
       Text:
       \(Format.border("DEF".count))
@@ -336,6 +342,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       
       XCTAssertNoDifference(printed, """
       Create Completions
+      
       Model: foobar
       Choices:
       #1:
@@ -415,6 +422,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       
       XCTAssertNoDifference(printed, """
       Create Completions
+      
       Model: foobar
       Text:
       \(Format.border("DEF".count))
@@ -464,6 +472,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
 
       XCTAssertNoDifference(printed, """
       Create Completions
+      
       ID: success
       Created: \(now.description)
       Model: foobar

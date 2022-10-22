@@ -45,6 +45,7 @@ final class ModelsListCommandTests: OpenAIDoTestCase {
 
       XCTAssertNoDifference(printed, """
       Available Models
+      
       ∙ model-1
       ∙ model-2
       
@@ -125,6 +126,7 @@ final class ModelsDetailCommandTests: OpenAIDoTestCase {
 
       XCTAssertNoDifference(printed, """
       Model Detail
+      
       ID: foobar
       Is Fine-Tune: no
       Supports Code: no
@@ -166,6 +168,7 @@ final class ModelsDetailCommandTests: OpenAIDoTestCase {
 
       XCTAssertNoDifference(printed, """
       Model Detail
+      
       ID: foobar
       Created: \(now.description)
       Owned By: jblogs

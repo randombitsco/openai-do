@@ -4,6 +4,14 @@ import ArgumentParser
 import Foundation
 import OpenAIBits
 
+// MARK: Completions.Stop
+
+extension Completions.Stop: ExpressibleByArgument {
+  public init?(argument: String) {
+    self.init(argument)
+  }
+}
+
 // MARK: File.ID
 
 extension File.ID: ExpressibleByArgument {

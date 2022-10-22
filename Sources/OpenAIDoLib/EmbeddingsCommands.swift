@@ -36,7 +36,7 @@ struct EmbeddingsCreateCommand: AsyncParsableCommand {
     help: "A filename to save the embedding into as a JSON file.",
     completion: .file(extensions: ["json"])
   )
-  var output: String
+  var outputFile: String
 
   @Argument(help: """
   Input text to get embeddings for. The input must not exceed 2048 tokens in length.
@@ -59,7 +59,7 @@ struct EmbeddingsCreateCommand: AsyncParsableCommand {
       user: user
     ))
 
-    let outputURL = URL(fileURLWithPath: output)
+    let outputURL = URL(fileURLWithPath: outputFile)
     let jsonData = try JSONEncoder().encode(result.data)
     try jsonData.write(to: outputURL)
 
@@ -67,6 +67,6 @@ struct EmbeddingsCreateCommand: AsyncParsableCommand {
     format.print(label: "Vector Size", value: result.data.map(\.embedding).map(\.count).reduce(0, +))
     format.print(usage: result.usage)
     format.println()
-    format.print(label: "JSON File Saved", value: output)
+    format.print(label: "JSON File Saved", value: outputFile)
   }
 }

@@ -196,14 +196,6 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
   }
 }
 
-// MARK: Completions.Create.Stop
-
-extension Completions.Stop: ExpressibleByArgument {
-  public init?(argument: String) {
-    self.init(argument)
-  }
-}
-
 // MARK: logitBias Parsing
 
 extension Token {

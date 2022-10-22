@@ -107,7 +107,7 @@ struct FilesDetailCommand: AsyncParsableCommand {
   }
 }
 
-/// MARK: download
+// MARK: download
 
 struct FilesDownloadCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
@@ -149,18 +149,10 @@ struct FilesDownloadCommand: AsyncParsableCommand {
     if let outputFile = outputFile {
       format.println()
       
-      format.print(log: "Opening file: \(outputFile)")
-      let file = try JSFile(path: outputFile)
+      let outputURL = URL(fileURLWithPath: outputFile)
+      try result.data.write(to: outputURL)
       
-      format.print(log: "Checking if the file already exists...")
-      if JSFolder.root.containsFile(at: file.path) {
-        throw AppError("File already exists at '\(outputFile)'")
-      }
-      
-      format.print(log: "Creating the new file...")
-      let newFile = try JSFolder.root.createFileIfNeeded(at: file.path, contents: result.data)
-      
-      format.print(label: "Saved To", value: newFile.path)
+      format.print(label: "Saved To", value: outputFile)
     }
   }
 }
