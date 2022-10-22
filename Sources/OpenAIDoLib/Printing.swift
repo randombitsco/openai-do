@@ -94,7 +94,10 @@ struct Format {
   }
   
   /// Prints a blank line.
-  func println() {
+  ///
+  /// - Parameter verbose: If `true`, will only print when `showVerbose` is `true`. Defaults to `false`.
+  func println(verbose: Bool = false) {
+    guard !verbose || showVerbose else { return }
     Format.print("\n")
   }
   
@@ -400,21 +403,35 @@ struct Format {
     indented(by: 2).print(list: model.permission, with: Format.print(permission:))
   }
 
-  func print(moderation response: Moderation) {
-    let maxCategoryName = Moderation.Category.allCases.map { $0.rawValue.count }.max() ?? 0
-    for (i, result) in response.results.enumerated() {
-      print(text: "#\(i + 1): \(result.flagged ? "FLAGGED" : "Unflagged") ")
-      for category in Moderation.Category.allCases {
-        var output = "N/A"
-        if let flagged = result.categories?[category] {
-          output = flagged ? "YES" : "no "
-        }
-        if let score = result.categoryScores?[category] {
-          output += " (\(score))"
-        }
-        let categoryName = "\(category):".padding(toLength: maxCategoryName + 1, withPad: " ", startingAt: 0)
-        print(text: "\(categoryName) \(output)")
+  func print(moderation: Moderation) {
+    print(label: "ID", value: moderation.id, verbose: true)
+    print(label: "Model", value: moderation.model, verbose: true)
+    println(verbose: true)
+    
+    if moderation.results.count == 1, let result = moderation.results.first {
+      print(label: "Result", value: result.flagged ? ForegroundColor(.red) { "FLAGGED" } : ForegroundColor(.green) { "Unflagged" } )
+      print(moderationResult: result)
+    } else {
+      for (i, result) in moderation.results.enumerated() {
+        print(label: "Result #\(i + 1)", value: result.flagged ? ForegroundColor(.red) { "FLAGGED" } : ForegroundColor(.green) { "Unflagged" })
+        print(moderationResult: result)
       }
+    }
+  }
+  
+  func print(moderationResult result: Moderation.Result) {
+    let maxCategoryName = Moderation.Category.allCases.map { $0.rawValue.count }.max() ?? 0
+    
+    for category in Moderation.Category.allCases {
+      var output = "N/A"
+      if let flagged = result.categories?[category] {
+        output = String(describing: flagged ? ForegroundColor(.red) { "YES" } : ForegroundColor(.green) { "no " })
+      }
+      if showVerbose, let score = result.categoryScores?[category] {
+        output += " (\(score))"
+      }
+      let categoryName = Bold { "\(category):".padding(toLength: maxCategoryName + 1, withPad: " ", startingAt: 0) }
+      print(bullet: "\(categoryName) \(output)")
     }
   }
   
