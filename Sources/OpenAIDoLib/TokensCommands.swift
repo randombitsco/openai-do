@@ -156,7 +156,8 @@ struct TokensDecodeCommand: AsyncParsableCommand {
       format.print(text: try toJson.encode(value: text))
     } else {
       format.print(title: "Token Decoding")
-      format.print(label: "Text", value: text)
+      format.print(section: "Text")
+      format.print(textBlock: text)
     }
   }
 }
