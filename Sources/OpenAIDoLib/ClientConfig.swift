@@ -27,7 +27,7 @@ struct ClientConfig: ParsableArguments {
   @Option(help: "The OpenAI API Key. If not provided, uses the 'OPENAI_API_KEY' environment variable.")
   var apiKey: String?
   
-  @Option(help: "The OpenAI Organisation key. If not provided, uses the 'OPENAI_ORG_KEY' environment variable.")
+  @Option(help: "The OpenAI Organisation Key. If not provided, uses the 'OPENAI_ORG_KEY' environment variable.")
   var orgKey: String?
   
   @OptionGroup var format: FormatConfig

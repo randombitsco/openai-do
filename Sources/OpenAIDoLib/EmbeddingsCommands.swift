@@ -2,16 +2,28 @@ import ArgumentParser
 import Foundation
 import OpenAIBits
 
-/// MARK: embeddings
+// MARK: embeddings
 
 struct EmbeddingsCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "embeddings",
+    abstract: "Commands relating to embeddings.",
+    subcommands: [
+      EmbeddingsCreateCommand.self,
+    ]
+  )
+}
+
+// MARK: create
+
+struct EmbeddingsCreateCommand: AsyncParsableCommand {
+  static var configuration = CommandConfiguration(
+    commandName: "create",
     abstract: "Creates an embedding vector representing the input text, saving the results into a JSON file."
   )
   
   @Option(help: """
-  The model ID to use creating the embeddings. Should be a 'text-similarity',  'text-search', or 'code-search'
+  The model ID to use creating the embeddings. Should be a 'text-similarity', 'text-search', or 'code-search' model.
   """)
   var modelId: Model.ID
 
@@ -29,7 +41,7 @@ struct EmbeddingsCommand: AsyncParsableCommand {
   @Argument(help: """
   Input text to get embeddings for. The input must not exceed 2048 tokens in length.
 
-  Unless you are embedding code, we suggest replacing newlines (`\n`) in your input with a single space, as we have observed inferior results when newlines are present.
+  Unless you are embedding code, we suggest replacing newlines (`\\n`) in your input with a single space, as we have observed inferior results when newlines are present.
   """)
   var input: String
   
@@ -52,7 +64,9 @@ struct EmbeddingsCommand: AsyncParsableCommand {
     try jsonData.write(to: outputURL)
 
     format.print(title: "Embeddings")
+    format.print(label: "Vector Size", value: result.data.map(\.embedding).map(\.count).reduce(0, +))
     format.print(usage: result.usage)
-    format.print(label: "JSON File Saved:", value: output)
+    format.println()
+    format.print(label: "JSON File Saved", value: output)
   }
 }

@@ -96,6 +96,8 @@ struct ModelsDetailCommand: AsyncParsableCommand {
   @Option(help: "The model ID.")
   var modelId: Model.ID
   
+  @OptionGroup var toJSON: ToJSONFrom<Model>
+  
   @OptionGroup var client: ClientConfig
   
   var format: FormatConfig { client.format }
@@ -106,8 +108,12 @@ struct ModelsDetailCommand: AsyncParsableCommand {
     
     let detail = try await client.call(Models.Detail(id: modelId))
     
-    format.print(title: "Model Detail")
-    format.print(id: detail)
-    format.print(model: detail)
+    if toJSON.enabled {
+      try format.print(text: toJSON.encode(value: detail))
+    } else {
+      format.print(title: "Model Detail")
+      format.print(id: detail)
+      format.print(model: detail)
+    }
   }
 }
