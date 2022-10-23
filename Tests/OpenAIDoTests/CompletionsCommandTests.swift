@@ -8,11 +8,11 @@ import XCTest
 final class CompletionsCommandTests: OpenAIDoTestCase {
   
   func testSimple() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "ABC")
+    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "--input", "ABC")
         
     XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.model.modelId, "foobar")
-    XCTAssertEqual(cmd.prompt, "ABC")
+    XCTAssertEqual(cmd.input, "ABC")
     
     let now = Date()
     
@@ -48,11 +48,11 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testBlankText() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "ABC")
+    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "-i", "ABC")
         
     XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.model.modelId, "foobar")
-    XCTAssertEqual(cmd.prompt, "ABC")
+    XCTAssertEqual(cmd.input, "ABC")
     
     let now = Date()
     
@@ -88,11 +88,11 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testTwoChoices() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "-n", "2", "ABC")
+    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "-n", "2", "-i", "ABC")
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.n, 2)
-    XCTAssertEqual(cmd.prompt, "ABC")
+    XCTAssertEqual(cmd.input, "ABC")
     
     let now = Date()
     
@@ -136,11 +136,11 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testToJSON() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "-n", "2", "--to-json", "--pretty", "ABC")
+    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "-n", "2", "--to-json", "--pretty", "-i", "ABC")
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.n, 2)
-    XCTAssertEqual(cmd.prompt, "ABC")
+    XCTAssertEqual(cmd.input, "ABC")
     XCTAssertEqual(cmd.toJson.enabled, true)
     
     let now = Date()
@@ -189,11 +189,11 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
 
   func testSingleLogitBias() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "--logit-bias", "1234:10", "ABC")
+    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "--logit-bias", "1234:10", "-i", "ABC")
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.logitBias, "1234:10")
-    XCTAssertEqual(cmd.prompt, "ABC")
+    XCTAssertEqual(cmd.input, "ABC")
     
     let now = Date()
     
@@ -228,11 +228,11 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
 
   func testMultipleLogitBiases() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "--logit-bias", "1234:10,5678:20", "ABC")
+    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "--logit-bias", "1234:10,5678:20", "-i", "ABC")
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.logitBias, "1234:10,5678:20")
-    XCTAssertEqual(cmd.prompt, "ABC")
+    XCTAssertEqual(cmd.input, "ABC")
     
     let now = Date()
     
@@ -271,11 +271,12 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       "completions",
       "create",
       "--model-id", "foobar",
+      "-i",
       "ABC"
     )
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
-    XCTAssertEqual(cmd.prompt, "ABC")
+    XCTAssertEqual(cmd.input, "ABC")
     
     let now = Date()
     
@@ -316,12 +317,13 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       "create",
       "--model-id", "foobar",
       "-n", "2",
+      "-i",
       "ABC"
     )
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.n, 2)
-    XCTAssertEqual(cmd.prompt, "ABC")
+    XCTAssertEqual(cmd.input, "ABC")
     
     let now = Date()
     
@@ -382,11 +384,11 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       "--best-of", "3",
       "--logit-bias", "50256:-100",
       "--user", "jblogs",
-      "ABC"
+      "-i", "ABC"
     )
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
-    XCTAssertEqual(cmd.prompt, "ABC")
+    XCTAssertEqual(cmd.input, "ABC")
     
     let now = Date()
     
@@ -437,12 +439,12 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testVerbose() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "--verbose", "ABC", "--logprobs", "2")
+    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "--verbose", "-i", "ABC", "--logprobs", "2")
         
     XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.client.format.verbose, true)
     XCTAssertEqual(cmd.model.modelId, "foobar")
-    XCTAssertEqual(cmd.prompt, "ABC")
+    XCTAssertEqual(cmd.input, "ABC")
     
     let now = Date()
     

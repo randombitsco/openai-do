@@ -42,7 +42,14 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
   }
   
   @OptionGroup var model: ModelConfig<CompletionModel>
-  
+    
+  @Option(name: .shortAndLong, help: """
+  The input prompt to generate completions for. (Defaults to '<|endoftext|>')
+
+  Note that '<|endoftext|>' is the document separator that the model sees during training, so if a prompt is not specified the model will generate as if from the beginning of a new document.
+  """)
+  var input: String
+
 //  @Option(help: """
 //  The ID of the model to prompt. You can use `\(COMMAND_NAME) models list` to see all of your available models.
 //  """)
@@ -129,13 +136,6 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
   """)
   var user: String?
   
-  @Argument(help: """
-  The prompt to generate completions for. (Defaults to '<|endoftext|>')
-
-  Note that '<|endoftext|>' is the document separator that the model sees during training, so if a prompt is not specified the model will generate as if from the beginning of a new document.
-  """)
-  var prompt: String
-  
   @OptionGroup var toJson: ToJSONFrom<Completion>
   
   @OptionGroup var client: ClientConfig
@@ -167,7 +167,7 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
     
     let completions = Completions.Create(
       model: try model.findModelId(),
-      prompt: .string(prompt),
+      prompt: .string(input),
       suffix: suffix,
       maxTokens: maxTokens,
       temperature: temperature,

@@ -11,7 +11,7 @@ final class TokensCountCommandTests: OpenAIDoTestCase {
       "tokens", "count", "-i", "Hello, world!"
     )
     
-    XCTAssertEqual(cmd.input, "Hello, world!")
+    XCTAssertEqual(cmd.input.value, "Hello, world!")
     
     try await cmd.run()
     
@@ -29,6 +29,13 @@ final class TokensCountCommandTests: OpenAIDoTestCase {
       as: TokensCountCommand.self
     )
   }
+  
+  func testCountWithNoInputFails() throws {
+    parseFail(
+      "tokens", "count", "--from-json",
+      as: TokensCountCommand.self
+    )
+  }
 }
 // MARK: TokensEncodeCommand
 
@@ -38,7 +45,7 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
       "tokens", "encode", "-i", "Hello, world!"
     )
     
-    XCTAssertEqual(cmd.input, "Hello, world!")
+    XCTAssertEqual(cmd.input.value, "Hello, world!")
     XCTAssertFalse(cmd.toJson.enabled)
     XCTAssertNil(cmd.toJson.style)
     XCTAssertFalse(cmd.format.verbose)
@@ -58,7 +65,7 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
       "tokens", "encode", "-i", "Hello, world!", "--to-json"
     )
 
-    XCTAssertEqual(cmd.input, "Hello, world!")
+    XCTAssertEqual(cmd.input.value, "Hello, world!")
     XCTAssertTrue(cmd.toJson.enabled)
     XCTAssertNil(cmd.toJson.style)
     XCTAssertFalse(cmd.format.verbose)
@@ -76,7 +83,7 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
       "tokens", "encode", "-i", "Hello, world!", "--to-json", "--pretty"
     )
 
-    XCTAssertEqual(cmd.input, "Hello, world!")
+    XCTAssertEqual(cmd.input.value, "Hello, world!")
     XCTAssertTrue(cmd.toJson.enabled)
     XCTAssertEqual(cmd.toJson.style, .pretty)
     XCTAssertFalse(cmd.format.verbose)

@@ -25,17 +25,38 @@ struct TokensCountCommand: AsyncParsableCommand {
     discussion: "This is performed locally, based on the published GPT-2/3 token encoder."
   )
   
-  @Option(name: .shortAndLong, help: "The text to estimate tokens for.")
-  var input: String
+  struct Help: InputHelp {
+    static var inputValueHelp: String {
+      "The input text to encode and count."
+    }
+    
+    static var inputFileHelp: String {
+      "The path to the text file containing the input text to encode and count."
+    }
+  }
   
+  @OptionGroup var input: InputOptions<Help>
+  
+  /// Options for outputing in JSON format.
+  @OptionGroup var toJson: ToJSONFrom<Int>
+  
+  @OptionGroup var format: FormatConfig
+    
   mutating func run() async throws {
     let encoder = try TokenEncoder()
-    let count = try encoder.encode(text: input).count
+    let inputValue = try input.getValue()
+    let count = try encoder.encode(text: inputValue).count
     
-    let format = Format.default
+    let format = format.new()
     
-    format.print(title: "Token Count")
-    format.print(label: "Count", value: count)
+    if toJson.enabled {
+      format.print(text: try toJson.encode(value: count))
+    } else {
+      format.print(title: "Token Count")
+      format.print(section: "Input", verbose: true)
+      format.print(textBlock: inputValue, verbose: true)
+      format.print(label: "Count", value: count)
+    }
   }
 }
 
@@ -54,8 +75,17 @@ struct TokensEncodeCommand: AsyncParsableCommand {
     """
   )
   
-  @Option(name: .shortAndLong, help: "The text to encode into tokens.")
-  var input: String
+  struct Help: InputHelp {
+    static var inputValueHelp: String {
+      "The input text to encode."
+    }
+    
+    static var inputFileHelp: String {
+      "The path to the text file containing the input text to encode."
+    }
+  }
+  
+  @OptionGroup var input: InputOptions<Help>
   
   /// Options for outputing in JSON format.
   @OptionGroup var toJson: ToJSONFrom<[Int]>
@@ -65,7 +95,7 @@ struct TokensEncodeCommand: AsyncParsableCommand {
   mutating func run() async throws {
     let format = format.new()
     let encoder = try TokenEncoder()
-    let tokens = try encoder.encode(text: input)
+    let tokens = try encoder.encode(text: input.getValue())
 
     if toJson.enabled {
       format.print(text: try toJson.encode(value: tokens))
@@ -107,11 +137,11 @@ struct TokensDecodeCommand: AsyncParsableCommand {
   @OptionGroup var format: FormatConfig
     
   mutating func validate() throws {
-    try fromJson.validate {
+    try fromJson.validateInput {
       input
     } example: {
       "tokens decode --from-json -i '[15496 11 995 0]'"
-    } ifDisabled: {
+    } otherwise: {
       guard !input.isEmpty else {
         throw ValidationError {
           "Specify at least one integer value to decode."
@@ -121,7 +151,7 @@ struct TokensDecodeCommand: AsyncParsableCommand {
       }
     }
     
-    try toJson.validate()
+//    try toJson.validate()
   }
   
   mutating func run() async throws {

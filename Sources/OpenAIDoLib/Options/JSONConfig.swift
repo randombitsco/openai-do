@@ -30,13 +30,15 @@ extension FromJSONTo {
   /// If ``enabled``, validates if the ``String`` value is present as expected.
   ///
   /// - Parameter input: The input to test.
-  func validate(
+  /// - Parameter example: Text for a good example.
+  /// - Parameter otherwise: A closure that runs if this is not enabled.
+  func validateInput(
     input: () -> String?,
     example: () -> String,
-    ifDisabled: () throws -> Void = {}
+    otherwise: () throws -> Void = {}
   ) throws {
     guard enabled else {
-      return try ifDisabled()
+      return try otherwise()
     }
     
     if input() == nil {
@@ -48,14 +50,17 @@ extension FromJSONTo {
   }
   
   /// If ``enabled``, verifies if the ``[String]`` has exactly one item, and  that it is valid JSON-encoded text.
-  
-  func validate(
+  /// - Parameters:
+  ///   - input: The input to test.
+  ///   - example: Text for a good example.
+  ///   - otherwise: A closure that runs if this is not enabled.
+  func validateInput(
     input: () -> [String],
     example: () -> String,
-    ifDisabled: () throws -> Void = {}
+    otherwise: () throws -> Void = {}
   ) throws {
     guard enabled else {
-      return try ifDisabled()
+      return try otherwise()
     }
     
     let input = input()

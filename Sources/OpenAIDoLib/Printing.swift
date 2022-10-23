@@ -125,7 +125,9 @@ struct Format {
   /// the beginning and end of the block.
   ///
   /// - Parameter textBlock: The text to print.
-  func print(textBlock: CustomStringConvertible) {
+  func print(textBlock: CustomStringConvertible, verbose: Bool = false) {
+    guard !verbose || showVerbose else { return }
+    
     let lines = textBlock.description.split(separator: "\n")
     let borderLength = lines.map(\.count).max() ?? 0
     let indented = lines.joined(separator: "\n\(indent)")
@@ -162,7 +164,8 @@ struct Format {
   
   /// Prints a section title. Typically used for sub-sections within a value.
   /// - Parameter text: The section title.
-  func print(section text: String) {
+  func print(section text: String, verbose: Bool = false) {
+    guard !verbose || showVerbose else { return }
     print(text: Bold { "\(text):" })
   }
   
