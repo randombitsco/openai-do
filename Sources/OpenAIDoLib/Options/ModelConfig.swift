@@ -32,7 +32,7 @@ extension ModelAlias {
     let allCases = Self.allCases
     let count = allCases.count
     switch count {
-    case 0: return "No aliases available."
+    case 0: return "None available."
     case 1: return "Must be '\(allCases.first!)'."
     case 2: return "Either '\(allCases.first!)' or '\(allCases.dropFirst().first!)'."
     default:
@@ -56,12 +56,12 @@ extension ModelAlias {
 /// via the `--model` argument, and specific IDs via the `--model-id` argument.
 struct ModelConfig<T>: ParsableArguments where T: ModelAlias {
   @Option(help: .init("""
-  \(T.modelHelp) Provide an alias here, or the ID via --model-id, but not both.
+  The model alias. \(T.modelHelp) Provide this or the ID via --model-id, but not both.
   """))
   var model: T?
   
   @Option(help: .init("""
-  \(T.modelIdHelp) Provide a model ID here, or the alias via --model, but not both.
+  \(T.modelIdHelp) Provide this or the alias via --model, but not both.
   """))
   var modelId: Model.ID?
   

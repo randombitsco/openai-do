@@ -12,7 +12,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         
     XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.model.modelId, "foobar")
-    XCTAssertEqual(cmd.input, "ABC")
+    XCTAssertEqual(cmd.input.value, "ABC")
     
     let now = Date()
     
@@ -52,7 +52,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
         
     XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.model.modelId, "foobar")
-    XCTAssertEqual(cmd.input, "ABC")
+    XCTAssertEqual(cmd.input.value, "ABC")
     
     let now = Date()
     
@@ -92,7 +92,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.n, 2)
-    XCTAssertEqual(cmd.input, "ABC")
+    XCTAssertEqual(cmd.input.value, "ABC")
     
     let now = Date()
     
@@ -140,7 +140,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.n, 2)
-    XCTAssertEqual(cmd.input, "ABC")
+    XCTAssertEqual(cmd.input.value, "ABC")
     XCTAssertEqual(cmd.toJson.enabled, true)
     
     let now = Date()
@@ -193,7 +193,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.logitBias, "1234:10")
-    XCTAssertEqual(cmd.input, "ABC")
+    XCTAssertEqual(cmd.input.value, "ABC")
     
     let now = Date()
     
@@ -232,7 +232,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.logitBias, "1234:10,5678:20")
-    XCTAssertEqual(cmd.input, "ABC")
+    XCTAssertEqual(cmd.input.value, "ABC")
     
     let now = Date()
     
@@ -276,7 +276,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     )
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
-    XCTAssertEqual(cmd.input, "ABC")
+    XCTAssertEqual(cmd.input.value, "ABC")
     
     let now = Date()
     
@@ -323,7 +323,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.n, 2)
-    XCTAssertEqual(cmd.input, "ABC")
+    XCTAssertEqual(cmd.input.value, "ABC")
     
     let now = Date()
     
@@ -388,7 +388,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     )
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
-    XCTAssertEqual(cmd.input, "ABC")
+    XCTAssertEqual(cmd.input.value, "ABC")
     
     let now = Date()
     
@@ -444,7 +444,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.client.format.verbose, true)
     XCTAssertEqual(cmd.model.modelId, "foobar")
-    XCTAssertEqual(cmd.input, "ABC")
+    XCTAssertEqual(cmd.input.value, "ABC")
     
     let now = Date()
     

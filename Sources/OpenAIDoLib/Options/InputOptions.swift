@@ -35,6 +35,16 @@ struct InputOptions<Config: InputHelp>: ParsableArguments {
       return try String(contentsOf: inputUrl, encoding: .utf8)
     }
   }
+  
+  func getOptionalValue() throws -> String? {
+    switch (value, file) {
+    case (.none, .none):
+      return nil
+    default:
+      return try getValue()
+    }
+  }
+
 }
 
 protocol InputHelp: Decodable {

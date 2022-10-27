@@ -36,19 +36,19 @@ struct EditsCreateCommand: AsyncParsableCommand {
   
   @OptionGroup var model: ModelConfig<EditModel>
   
-//  @Option(name: .long, help: """
-//  Either 'davinci', or 'codex', or the full ID of the model to prompt.
-//
-//  Must be an 'edit' model (use `models list --edit`).
-//  """)
-//  var modelId: EditsModelID
+  struct Help: InputHelp {
+    static var inputValueHelp: String {
+      "The input text to use as a starting point for the edit. (Defaults to '')"
+    }
+    
+    static var inputFileHelp: String {
+      "The path to a file containing the input text. Provide either this or --input, not both."
+    }
+  }
   
-  @Argument(help: """
-  The input text to use as a starting point for the edit. (Defaults to '')
-  """)
-  var input: String?
+  @OptionGroup var input: InputOptions<Help>
   
-  @Option(name: .shortAndLong, help: """
+  @Option(help: """
   The instruction that tells the model how to edit the prompt.
   """)
   var instruction: String
@@ -82,7 +82,7 @@ struct EditsCreateCommand: AsyncParsableCommand {
     
     let edits = Edits.Create(
       model: try model.findModelId(),
-      input: input,
+      input: try input.getOptionalValue(),
       instruction: instruction,
       n: n,
       temperature: temperature,

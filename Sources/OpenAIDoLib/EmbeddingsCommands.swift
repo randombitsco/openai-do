@@ -26,6 +26,22 @@ struct EmbeddingsCreateCommand: AsyncParsableCommand {
   The model ID to use creating the embeddings. Should be a 'text-similarity', 'text-search', or 'code-search' model.
   """)
   var modelId: Model.ID
+  
+  struct Help: InputHelp {
+    static var inputValueHelp: String {
+        """
+        Input text to get embeddings for. The input must not exceed 2048 tokens in length.
+
+        Unless you are embedding code, we suggest replacing newlines (`\\n`) in your input with a single space, as we have observed inferior results when newlines are present.
+        """
+    }
+    
+    static var inputFileHelp: String {
+      "The path to a file containing the input text to get embeddings for. Provide either this or --input, not both."
+    }
+  }
+  
+  @OptionGroup var input: InputOptions<Help>
 
   @Option(help: """
   A unique identifier representing your end-user, which will help OpenAI to monitor and detect abuse.
@@ -37,13 +53,6 @@ struct EmbeddingsCreateCommand: AsyncParsableCommand {
     completion: .file(extensions: ["json"])
   )
   var outputFile: String
-
-  @Argument(help: """
-  Input text to get embeddings for. The input must not exceed 2048 tokens in length.
-
-  Unless you are embedding code, we suggest replacing newlines (`\\n`) in your input with a single space, as we have observed inferior results when newlines are present.
-  """)
-  var input: String
   
   @OptionGroup var client: ClientConfig
   
@@ -55,7 +64,7 @@ struct EmbeddingsCreateCommand: AsyncParsableCommand {
 
     let result = try await client.call(Embeddings.Create(
       model: modelId, 
-      input: .string(input),
+      input: .string(try input.getValue()),
       user: user
     ))
 

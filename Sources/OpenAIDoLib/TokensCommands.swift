@@ -77,11 +77,11 @@ struct TokensEncodeCommand: AsyncParsableCommand {
   
   struct Help: InputHelp {
     static var inputValueHelp: String {
-      "The input text to encode."
+      "The input text to encode. Provide either this or --input-file, not both."
     }
     
     static var inputFileHelp: String {
-      "The path to the text file containing the input text to encode."
+      "The path to the text file containing the input text to encode. Provide either this or --input, not both."
     }
   }
   
