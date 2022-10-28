@@ -26,9 +26,9 @@ struct FineTunesListCommand: AsyncParsableCommand {
     abstract: "Lists the current fine-tuned models."
   )
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()
@@ -129,9 +129,9 @@ struct FineTunesCreateCommand: AsyncParsableCommand {
   """)
   public var suffix: String?
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func validate() throws {
     if computeClassificationMetrics == true && validationFile == nil {
@@ -170,9 +170,9 @@ struct FineTunesDetailCommand: AsyncParsableCommand {
   @Option(help: "The ID of the fine-tune job.")
   var fineTuneId: FineTune.ID
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()
@@ -196,9 +196,9 @@ struct FineTunesCancelCommand: AsyncParsableCommand {
   @Option(help: "The ID of the fine-tune job to cancel.")
   var fineTuneId: FineTune.ID
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()
@@ -222,9 +222,9 @@ struct FineTunesEventsCommand: AsyncParsableCommand {
   @Option(help: "The ID of the fine-tune job to get events for.")
   var fineTuneId: FineTune.ID
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()
@@ -248,9 +248,9 @@ struct FineTunesDeleteCommand: AsyncParsableCommand {
   @Option(help: "The fine-tuned model to delete.")
   var modelId: Model.ID
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()

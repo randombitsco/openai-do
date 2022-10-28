@@ -17,14 +17,14 @@ class OpenAIDoTestCase: XCTestCase {
     self._print = Format.print
     Format.print = { self.printed.append(String(describing: $0)) }
     
-    _findApiKey = ClientConfig.findApiKey
-    ClientConfig.findApiKey = { self.apiKey }
+    _findApiKey = ClientOptions.findApiKey
+    ClientOptions.findApiKey = { self.apiKey }
   }
   
   override func tearDown() {
     printed = ""
     Format.print = self._print
     
-    ClientConfig.findApiKey = _findApiKey
+    ClientOptions.findApiKey = _findApiKey
   }
 }

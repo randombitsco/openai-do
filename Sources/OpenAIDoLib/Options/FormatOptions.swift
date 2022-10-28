@@ -1,6 +1,6 @@
 import ArgumentParser
 
-struct FormatConfig: ParsableArguments {
+struct FormatOptions: ParsableArguments {
   @Flag(help: "Output more details.")
   var verbose: Bool = false
     

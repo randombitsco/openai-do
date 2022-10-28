@@ -40,9 +40,9 @@ struct ModelsListCommand: AsyncParsableCommand {
   @Option(help: "A text value the model name must contains.")
   var contains: String?
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()
@@ -98,9 +98,9 @@ struct ModelsDetailCommand: AsyncParsableCommand {
   
   @OptionGroup var toJSON: ToJSONFrom<Model>
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()

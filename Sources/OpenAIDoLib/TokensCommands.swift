@@ -40,7 +40,7 @@ struct TokensCountCommand: AsyncParsableCommand {
   /// Options for outputing in JSON format.
   @OptionGroup var toJson: ToJSONFrom<Int>
   
-  @OptionGroup var format: FormatConfig
+  @OptionGroup var format: FormatOptions
     
   mutating func run() async throws {
     let encoder = try TokenEncoder()
@@ -90,7 +90,7 @@ struct TokensEncodeCommand: AsyncParsableCommand {
   /// Options for outputing in JSON format.
   @OptionGroup var toJson: ToJSONFrom<[Int]>
   
-  @OptionGroup var format: FormatConfig
+  @OptionGroup var format: FormatOptions
   
   mutating func run() async throws {
     let format = format.new()
@@ -134,7 +134,7 @@ struct TokensDecodeCommand: AsyncParsableCommand {
   
   @OptionGroup var toJson: ToJSONFrom<String>
   
-  @OptionGroup var format: FormatConfig
+  @OptionGroup var format: FormatOptions
     
   mutating func validate() throws {
     try fromJson.validateInput {

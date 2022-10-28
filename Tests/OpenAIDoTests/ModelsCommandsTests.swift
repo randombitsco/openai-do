@@ -69,7 +69,7 @@ final class ModelsListCommandTests: OpenAIDoTestCase {
   }
 
   func testListWithNoApiKey() throws {
-    ClientConfig.findApiKey = { nil }
+    ClientOptions.findApiKey = { nil }
     parseFail("models", "list", as: ModelsListCommand.self)
   }
 

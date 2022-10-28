@@ -26,9 +26,9 @@ struct FilesListCommand: AsyncParsableCommand {
     abstract: "List available files."
   )
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()
@@ -63,9 +63,9 @@ struct FilesUploadCommand: AsyncParsableCommand {
   """)
   var purpose: Files.Upload.Purpose
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()
@@ -91,9 +91,9 @@ struct FilesDetailCommand: AsyncParsableCommand {
   @Option(name: [.customLong("id"), .long], help: "The file ID.")
   var fileId: File.ID
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()
@@ -123,9 +123,9 @@ struct FilesDownloadCommand: AsyncParsableCommand {
   """, completion: .file())
   var outputFile: String?
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()
@@ -168,9 +168,9 @@ struct FilesDeleteCommand: AsyncParsableCommand {
   @Option(name: [.customLong("id"), .long], help: "The file ID.")
   var fileId: File.ID
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()

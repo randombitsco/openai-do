@@ -34,7 +34,7 @@ struct EditsCreateCommand: AsyncParsableCommand {
     }
   }
   
-  @OptionGroup var model: ModelConfig<EditModel>
+  @OptionGroup var model: ModelOptions<EditModel>
   
   struct Help: InputHelp {
     static var inputValueHelp: String {
@@ -72,9 +72,9 @@ struct EditsCreateCommand: AsyncParsableCommand {
   """)
   var topP: Percentage?
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   mutating func run() async throws {
     let client = client.new()

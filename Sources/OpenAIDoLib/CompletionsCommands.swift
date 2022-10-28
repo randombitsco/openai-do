@@ -41,7 +41,7 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
     }    
   }
   
-  @OptionGroup var model: ModelConfig<CompletionModel>
+  @OptionGroup var model: ModelOptions<CompletionModel>
     
   struct Help: InputHelp {
     static var inputValueHelp: String {
@@ -147,9 +147,9 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
   
   @OptionGroup var toJson: ToJSONFrom<Completion>
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
   
   /// Parses the logit bias string into a dictionary of token IDs to biases.
   /// - Returns: A dictionary of token IDs to biases, or `nil` if none provided.

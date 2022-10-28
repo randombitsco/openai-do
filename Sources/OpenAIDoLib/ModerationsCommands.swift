@@ -37,9 +37,9 @@ struct ModerationsCreateCommand: AsyncParsableCommand {
   @Flag(help: "Specify either the \"latest\" or \"stable\" classifier model, which updates less frequently. Accuracy may be slightly lower than \"latest\". Defaults to \"latest\".")
   var model: Moderations.Model?
   
-  @OptionGroup var client: ClientConfig
+  @OptionGroup var client: ClientOptions
   
-  var format: FormatConfig { client.format }
+  var format: FormatOptions { client.format }
 
   mutating func run() async throws {
     let client = client.new()

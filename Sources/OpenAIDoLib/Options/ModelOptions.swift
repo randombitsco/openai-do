@@ -54,7 +54,7 @@ extension ModelAlias {
 
 /// Provides support for having common aliases for `Model.ID` values which can be specified
 /// via the `--model` argument, and specific IDs via the `--model-id` argument.
-struct ModelConfig<T>: ParsableArguments where T: ModelAlias {
+struct ModelOptions<T>: ParsableArguments where T: ModelAlias {
   @Option(help: .init("""
   The model alias. \(T.modelHelp) Provide this or the ID via --model-id, but not both.
   """))
