@@ -71,7 +71,7 @@ struct TokensEncodeCommand: AsyncParsableCommand {
     commandName: "encode",
     abstract: "Encodes the input text into an estimate of the tokens array used by GPT-2/3.",
     discussion: """
-    This uses OpenAI's published GPT-2/3 token encoder, but is performed locally. Exact tokens when calling `completions` or `edits` may differ.
+    This uses OpenAI's published GPT-2/3 token encoder, but is performed locally. Exact tokens when calling "completions" or "edits" may differ.
     """
   )
   

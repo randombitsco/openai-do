@@ -77,21 +77,21 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
   @Option(help: """
   What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer.  (Defaults to 1)
   
-  We generally recommend altering this or `top-p` but not both.
+  We generally recommend altering this or --top-p but not both.
   """)
   var temperature: Percentage?
   
   @Option(name: .customLong("top-p"), help: """
   An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top-p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. (Defaults to 1)
   
-  We generally recommend altering this or `temperature` but not both.
+  We generally recommend altering this or --temperature but not both.
   """)
   var topP: Percentage?
   
   @Option(name: .short, help: """
   How many completions to generate for each prompt. (Defaults to 1)
           
-  Note: Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for `max-tokens` and stop.
+  Note: Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for --max-tokens and stop.
   """)
   var n: Int?
 
@@ -123,11 +123,11 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
   var frequencyPenalty: Penalty?
   
   @Option(help: """
-  Generates `best-of` completions server-side and returns the \"best\" (the one with the highest log probability per token). Results cannot be streamed. (Defaults to 1)
+  Generates the specified number of completions server-side and returns the "best" (the one with the highest log probability per token). Results cannot be streamed. (Defaults to 1)
   
-  When used with `n`, `best-of` controls the number of candidate completions and `n` specifies how many to return – `best-of` must be greater than `n`.
+  When used with -n, best-of controls the number of candidate completions and -n specifies how many to return – best-of must be greater than -n.
   
-  Note: Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for `max-tokens` and `stop`.
+  Note: Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for --max-tokens and --stop.
   """)
   var bestOf: Int?
   

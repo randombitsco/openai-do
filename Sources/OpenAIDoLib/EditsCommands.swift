@@ -61,14 +61,14 @@ struct EditsCreateCommand: AsyncParsableCommand {
   @Option(help: """
   What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer. (Defaults to 1)
   
-  We generally recommend altering this or `top-p` but not both.
+  We generally recommend altering this or --top-p but not both.
   """)
   var temperature: Percentage?
   
   @Option(name: .customLong("top-p"), help: """
   An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top-p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
   
-  We generally recommend altering this or `temperature` but not both. (Defaults to 1)
+  We generally recommend altering this or --temperature but not both. (Defaults to 1)
   """)
   var topP: Percentage?
   

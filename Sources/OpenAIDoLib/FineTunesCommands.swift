@@ -52,7 +52,7 @@ struct FineTunesCreateCommand: AsyncParsableCommand {
   @Option(help: """
   The ID of an uploaded file that contains training data.
   
-  Your dataset must be formatted as a JSONL file, where each training example is a JSON object with the keys "prompt" and "completion". Additionally, you must upload your file with the purpose 'fine-tune'.
+  Your dataset must be formatted as a JSONL file, where each training example is a JSON object with the keys "prompt" and "completion". Additionally, you must upload your file with the purpose "fine-tune".
   """)
   public var trainingFile: File.ID
   
@@ -61,7 +61,7 @@ struct FineTunesCreateCommand: AsyncParsableCommand {
 
   If you provide this file, the data is used to generate validation metrics periodically during fine-tuning. These metrics can be viewed in the fine-tuning results file. Your train and validation data should be mutually exclusive.
 
-  Your dataset must be formatted as a JSONL file, where each validation example is a JSON object with the keys "prompt" and "completion". Additionally, you must upload your file with the purpose `fine-tune`.
+  Your dataset must be formatted as a JSONL file, where each validation example is a JSON object with the keys "prompt" and "completion". Additionally, you must upload your file with the purpose "fine-tune".
   """)
   public var validationFile: File.ID?
   
@@ -85,7 +85,7 @@ struct FineTunesCreateCommand: AsyncParsableCommand {
   @Option(help: """
   The learning rate multiplier to use for training. The fine-tuning learning rate is the original learning rate used for pretraining multiplied by this value.
 
-  By default, the learning rate multiplier is the 0.05, 0.1, or 0.2 depending on final batch_size (larger learning rates tend to perform better with larger batch sizes). We recommend experimenting with values in the range 0.02 to 0.2 to see what produces the best results.
+  By default, the learning rate multiplier is the 0.05, 0.1, or 0.2 depending on final --batch-size (larger learning rates tend to perform better with larger batch sizes). We recommend experimenting with values in the range 0.02 to 0.2 to see what produces the best results.
   """)
   public var learningRateMultiplier: Double?
   

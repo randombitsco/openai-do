@@ -31,7 +31,7 @@ struct ModelsListCommand: AsyncParsableCommand {
   @Flag(help: "If set, only models compatible optimised for code generation will be listed.")
   var code: Bool = false
   
-  @Flag(name: [.long], help: "If set, only models compatible with `embeddings` calls will be listed.")
+  @Flag(name: [.long], help: "If set, only models compatible with \"embeddings create\" calls will be listed.")
   var embeddings: Bool = false
   
   @Flag(help: "If set, only fine-tuned models will be listed.")

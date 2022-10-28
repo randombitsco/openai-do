@@ -46,7 +46,7 @@ struct FilesListCommand: AsyncParsableCommand {
 struct FilesUploadCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "upload",
-    abstract: "Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. "
+    abstract: "Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB."
   )
   
   @Option(help: """
@@ -59,7 +59,7 @@ struct FilesUploadCommand: AsyncParsableCommand {
   @Option(name: .long, help: """
   The intended purpose of the uploaded documents.
 
-  Use 'fine-tune' for Fine-tuning. This allows validation of the format of the uploaded file.
+  Use "fine-tune" for Fine-tuning. This allows validation of the format of the uploaded file.
   """)
   var purpose: Files.Upload.Purpose
   
