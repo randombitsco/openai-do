@@ -210,7 +210,7 @@ struct Format {
   /// - Parameters:
   ///   - list: The list of items to print.
   ///   - printer: The ``Printer`` to print the item with.
-  func print<T>(list: [T], with printer: Printer<T>) where T: Identified {
+  func print<T>(list: [T], with printer: Printer<T>) where T: Identifiable {
     print(list: list, label: \.label, with: printer)
   }
   
@@ -274,17 +274,6 @@ struct Format {
 
   // MARK: Printers for specific types.
 
-  func print(choice: Completion.Choice) {
-    print(section: "Text")
-    print(textBlock: choice.text)
-    print(label: "Finish Reason", value: choice.finishReason)
-
-    if let logprobs = choice.logprobs {
-      print(section: "Logprobs")
-      print(logprobs: logprobs)
-    }
-  }
-
   func print(completion: Completion) {
     print(label: "ID", value: completion.id, verbose: true)
     print(label: "Created", value: completion.created, verbose: true)
@@ -299,6 +288,35 @@ struct Format {
     }
 
     print(usage: completion.usage)
+  }
+
+  func print(choice: Completion.Choice) {
+    print(section: "Text")
+    print(textBlock: choice.text)
+    print(label: "Finish Reason", value: choice.finishReason)
+
+    if let logprobs = choice.logprobs {
+      print(section: "Logprobs")
+      print(logprobs: logprobs)
+    }
+  }
+  
+  func print(edit: Edit) {
+    print(label: "Created", value: edit.created, verbose: true)
+    
+    if edit.choices.count == 1, let choice = edit.choices.first {
+      print(choice: choice)
+    } else {
+      print(section: "Choices")
+      print(list: edit.choices, with: Format.print(choice:))
+    }
+    
+    print(usage: edit.usage)
+  }
+
+  func print(choice: Edit.Choice) {
+    print(section: "Text")
+    print(textBlock: choice.text)
   }
 
   func print(event: FineTune.Event) {
@@ -358,8 +376,8 @@ struct Format {
     print(label: "ID", value: Italic { id.value })
   }
   
-  func print<T: Identified>(id identified: T) {
-    print(id: identified.id)
+  func print<T: Identifiable>(id identifiable: T) where T.ID: Identifier {
+    print(id: identifiable.id)
   }
   
   func print(logprobs: Logprobs) {
@@ -473,12 +491,12 @@ extension Bool {
   var yesNo: String { self ? "yes" : "no" }
 }
 
-extension Identified {
+extension Identifiable {
   /// Creates a label for the `Identified` as a string, using the `id`'s `value`.
   var label: CustomStringConvertible {
     Prism {
       Bold { "ID:"}
-      Italic { id.value }
+      Italic { String(describing: id) }
     }
   }
 }

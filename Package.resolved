@@ -24,7 +24,7 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser.git",
         "state": {
           "branch": "main",
-          "revision": "76259ebe8c477ecc4e938d0831aea4c25f9ee3ee",
+          "revision": "4256f8848801c7341770d0c8d31ccc968c659c81",
           "version": null
         }
       },
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
           "branch": null,
-          "revision": "15bba50ebf3a2065388c8d12210debe4f6ada202",
-          "version": "0.10.0"
+          "revision": "bb436421f57269fbcfe7360735985321585a86e5",
+          "version": "0.10.1"
         }
       },
       {
@@ -51,7 +51,7 @@
         "repositoryURL": "/Users/david/Development/Projects/randombitsco/swift-openai-bits",
         "state": {
           "branch": "main",
-          "revision": "10f12244f7ec6c1d36aae26e075751b0d2f22116",
+          "revision": "6f471b7124e09e33fd40c45738952b017036911b",
           "version": null
         }
       },

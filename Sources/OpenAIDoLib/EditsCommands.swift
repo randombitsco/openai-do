@@ -72,6 +72,8 @@ struct EditsCreateCommand: AsyncParsableCommand {
   """)
   var topP: Percentage?
   
+  @OptionGroup var toJson: ToJSONFrom<Edit>
+  
   @OptionGroup var client: ClientOptions
   
   var format: FormatOptions { client.format }
@@ -88,14 +90,14 @@ struct EditsCreateCommand: AsyncParsableCommand {
       temperature: temperature,
       topP: topP
     )
-    
+
     let result = try await client.call(edits)
-    
-    format.print(title: "Edits")
-    for choice in result.choices {
-      print("\(choice.index): \"\(choice.text)\"\n")
+
+    if toJson.enabled {
+      format.print(text: try toJson.encode(value: result))
+    } else {
+      format.print(title: "Edits")
+      format.print(edit: result)
     }
-    
-    format.print(usage: result.usage)
   }
 }
