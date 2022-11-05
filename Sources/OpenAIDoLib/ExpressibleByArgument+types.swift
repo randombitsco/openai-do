@@ -65,3 +65,19 @@ extension Percentage: ExpressibleByArgument {
     self.init(value)
   }
 }
+
+// MARK: Images.Generations.Size
+
+extension Images.Generations.Size: ExpressibleByArgument {
+  public init?(argument: String) {
+    self.init(rawValue: argument)
+  }
+}
+
+// MARK: Images.Generations.ResponseFormat
+
+extension Images.Generations.ResponseFormat: ExpressibleByArgument {
+  public init?(argument: String) {
+    self.init(rawValue: argument)
+  }
+}

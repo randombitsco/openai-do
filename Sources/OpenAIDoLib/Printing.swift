@@ -1,3 +1,4 @@
+import Foundation
 import OpenAIBits
 import Prism
 
@@ -378,6 +379,26 @@ struct Format {
   
   func print<T: Identifiable>(id identifiable: T) where T.ID: Identifier {
     print(id: identifiable.id)
+  }
+  
+  func print(image: Image) {
+    print(label: "Created", value: image.created, verbose: true)
+    
+    if image.data.count == 1, let data = image.data.first {
+      print(imageData: data)
+    } else {
+      print(list: image.data, with: Format.print(imageData:))
+    }
+  }
+  
+  func print(imageData: Image.Data) {
+    switch imageData {
+    case .url(let url):
+      print(label: "URL", value: url.absoluteString)
+    case .base64(let data):
+      let value = ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .binary)
+      print(label: "Data Size", value: value)
+    }
   }
   
   func print(logprobs: Logprobs) {
