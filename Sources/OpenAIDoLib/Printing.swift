@@ -102,6 +102,13 @@ struct Format {
     Format.print("\n")
   }
   
+  /// Prints an error message
+  ///
+  ///- Parameter error: The message to output
+  func print(error message: CustomStringConvertible) {
+    print(text: ForegroundColor(.red) { String(describing: message) })
+  }
+  
   /// Generates a horizontal border `String` with the specified number of characters,
   /// optionally specifying the character to repeat.
   ///
@@ -159,7 +166,8 @@ struct Format {
   /// Prints the provided text as a "subtitle".
   ///
   /// - Parameter title: The title text ``String``.
-  func print(subtitle text: CustomStringConvertible) {
+  func print(subtitle text: CustomStringConvertible, verbose: Bool = false) {
+    guard !verbose || showVerbose else { return }
     print(text: Italic { String(describing: text) })
   }
   
@@ -321,7 +329,7 @@ struct Format {
   }
 
   func print(event: FineTune.Event) {
-    print(label: "Created At", value: event.createdAt)
+    print(label: "Created", value: event.created)
     print(label: "Level", value: event.level)
     print(label: "Message", value: event.level)
   }
@@ -332,7 +340,7 @@ struct Format {
     print(label: "Bytes", value: file.bytes)
     print(label: "Status", value: file.status)
     print(label: "Status Details", value: file.statusDetails)
-    print(label: "Created At", value: file.createdAt)
+    print(label: "Created", value: file.created)
   }
 
   func print(fineTune: FineTune) {
@@ -340,8 +348,8 @@ struct Format {
     print(label: "Fine-Tuned Model", value: fineTune.fineTunedModel)
     print(label: "Organization", value: fineTune.organizationId, verbose: true)
     print(label: "Status", value: fineTune.status)
-    print(label: "Created At", value: fineTune.createdAt)
-    print(label: "Updated At", value: fineTune.updatedAt)
+    print(label: "Created", value: fineTune.created)
+    print(label: "Updated", value: fineTune.updated)
     print(label: "Batch Size", value: fineTune.hyperparams.batchSize, verbose: true)
     print(label: "Learning Rate Multiplier", value: fineTune.hyperparams.learningRateMultiplier, verbose: true)
     print(label: "N-Epochs", value: fineTune.hyperparams.nEpochs, verbose: true)
@@ -381,21 +389,23 @@ struct Format {
     print(id: identifiable.id)
   }
   
-  func print(image: Image) {
-    print(label: "Created", value: image.created, verbose: true)
+  func print(generations: Generations) {
+    print(label: "Created", value: generations.created, verbose: true)
     
-    if image.data.count == 1, let data = image.data.first {
-      print(imageData: data)
+    if generations.images.count == 1,
+       let image = generations.images.first
+    {
+      print(image: image)
     } else {
-      print(list: image.data, with: Format.print(imageData:))
+      print(list: generations.images, with: Format.print(image:))
     }
   }
   
-  func print(imageData: Image.Data) {
-    switch imageData {
+  func print(image: Generations.Image) {
+    switch image {
     case .url(let url):
-      print(label: "URL", value: url.absoluteString)
-    case .base64(let data):
+      print(label: "Link", value: url.absoluteString)
+    case .data(let data):
       let value = ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .binary)
       print(label: "Data Size", value: value)
     }
