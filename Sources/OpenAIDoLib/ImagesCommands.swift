@@ -19,12 +19,13 @@ struct ImagesCommand: AsyncParsableCommand {
 /// Creates a filename given the `created` `Date`, image index, and prompt. It does not include a file extension.
 ///
 /// - Parameters:
+///   - prefix: The image prefix.
 ///   - created: The created date.
 ///   - index: The image index.
 ///   - prompt: The prompt that created the image.
 /// - Returns: The filename.
-fileprivate func imageName(created: Date, index: Int, prompt: String?) -> String {
-  var result = ""
+fileprivate func imageName(prefix: String, created: Date, index: Int, suffix: String?) -> String {
+  var result = "\(prefix) - "
   
   let createdValue = ISO8601DateFormatter.string(from: created, timeZone: .current, formatOptions: [.withFullDate, .withFullTime])
   
@@ -36,12 +37,12 @@ fileprivate func imageName(created: Date, index: Int, prompt: String?) -> String
     result.append(" (\(indexValue))")
   }
   
-  if var prompt = prompt?[...] {
+  if var suffix = suffix?[...] {
     result.append(" - ")
-    if prompt.last == "." {
-      prompt = prompt.dropLast(1)
+    if suffix.last == "." {
+      suffix = suffix.dropLast(1)
     }
-    result.append(String(prompt))
+    result.append(String(suffix))
   }
   
   return result.whitespaceCondensed().sanitized(replacement: "_")
@@ -118,7 +119,7 @@ struct ImagesCreateCommand: AsyncParsableCommand {
     } else {
       let targetFolder = URL(fileURLWithPath: outputFolder ?? "")
       
-      format.print(title: "Image Generations")
+      format.print(title: "Image Create")
       format.print(label: "Input", value: prompt, verbose: true)
       format.print(label: "Size", value: size?.rawValue, verbose: true)
       
@@ -134,7 +135,7 @@ struct ImagesCreateCommand: AsyncParsableCommand {
           indented.print(label: "URL", value: url, verbose: true)
         }
 
-        let filename = imageName(created: result.created, index: i, prompt: prompt)
+        let filename = imageName(prefix: "create", created: result.created, index: i, suffix: prompt)
         let fileUrl = URL(fileURLWithPath: "\(filename).png", relativeTo: targetFolder)
         
         do {
@@ -240,7 +241,7 @@ struct ImagesEditCommand: AsyncParsableCommand {
     } else {
       let targetFolder = URL(fileURLWithPath: outputFolder ?? "")
       
-      format.print(title: "Image Generations")
+      format.print(title: "Image Edit")
       format.print(label: "Input", value: prompt, verbose: true)
       format.print(label: "Size", value: size?.rawValue, verbose: true)
       
@@ -256,7 +257,7 @@ struct ImagesEditCommand: AsyncParsableCommand {
           indented.print(label: "URL", value: url, verbose: true)
         }
 
-        let filename = imageName(created: result.created, index: i, prompt: prompt)
+        let filename = imageName(prefix: "edit", created: result.created, index: i, suffix: prompt)
         let fileUrl = URL(fileURLWithPath: "\(filename).png", relativeTo: targetFolder)
         
         do {
@@ -354,7 +355,8 @@ struct ImagesVariationCommand: AsyncParsableCommand {
           indented.print(label: "URL", value: url, verbose: true)
         }
 
-        let filename = imageName(created: result.created, index: i, prompt: nil)
+        let imageFileName = imageUrl.deletingPathExtension().lastPathComponent
+        let filename = imageName(prefix: "variation", created: result.created, index: i, suffix: imageFileName)
         let fileUrl = URL(fileURLWithPath: "\(filename).png", relativeTo: targetFolder)
         
         do {
