@@ -47,7 +47,7 @@ struct ClientOptions: ParsableArguments {
   }
   
   /// Configures a ``Client/Logger`` function, which if in ``debug`` mode, will print, otherwise returns `nil`.
-  var log: Client.Logger? {
+  var log: OpenAI.Logger? {
     guard format.debug else {
       return nil
     }
@@ -56,8 +56,8 @@ struct ClientOptions: ParsableArguments {
   
   /// Creates a new ``Client`` based on the current configuration.
   /// - Returns: The new ``Client`` instance.
-  func new() -> Client {
-    Client(apiKey: findApiKey() ?? "NO API KEY PROVIDED", organization: findOrgKey(), log: log)
+  func new() -> OpenAI {
+    OpenAI(apiKey: findApiKey() ?? "NO API KEY PROVIDED", organization: findOrgKey(), log: log)
   }
   
   mutating func validate() throws {

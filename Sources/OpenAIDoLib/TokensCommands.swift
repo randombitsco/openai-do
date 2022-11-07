@@ -85,10 +85,11 @@ struct TokensEncodeCommand: AsyncParsableCommand {
     }
   }
   
+  /// Options for getting the input prompt as an argument or as the contents of a file.
   @OptionGroup var input: InputOptions<Help>
   
   /// Options for outputing in JSON format.
-  @OptionGroup var toJson: ToJSONFrom<[Int]>
+  @OptionGroup var toJson: ToJSONFrom<[Token]>
   
   @OptionGroup var format: FormatOptions
   
@@ -130,7 +131,7 @@ struct TokensDecodeCommand: AsyncParsableCommand {
   """)
   var input: [String]
   
-  @OptionGroup var fromJson: FromJSONTo<[Int]>
+  @OptionGroup var fromJson: FromJSONTo<[Token]>
   
   @OptionGroup var toJson: ToJSONFrom<String>
   
@@ -150,24 +151,23 @@ struct TokensDecodeCommand: AsyncParsableCommand {
         }
       }
     }
-    
-//    try toJson.validate()
   }
   
   mutating func run() async throws {
     let tokens = try fromJson.decode {
-      try input.first  ?! ValidationError {
+      try input.first ?! ValidationError {
         "Expected a single text value, but got \(input.count)."
       } example: {
         "tokens decode --from-json -i '[15496, 11, 995, 0]'"
       }
     } otherwise: {
       try input.map({ text in
-        try Int(text, radix: 10) ?! ValidationError {
+        let intValue = try Int(text, radix: 10) ?! ValidationError {
           "Expected an integer, got \"\(text)\"."
         } example: {
           "tokens decode -i 15496 11 995 0"
         }
+        return Token(intValue)
       })
     }
     
