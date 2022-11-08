@@ -117,10 +117,13 @@ struct ImagesCreateCommand: AsyncParsableCommand {
     
     if !toJson.enabled {
       format.print(title: "Image Create")
+      
       format.print(label: "Input", value: prompt, verbose: true)
       format.print(label: "Size", value: size?.rawValue, verbose: true)
+      format.println(verbose: true)
       
       format.print(info: "Sending request...")
+      format.println()
     }
     
     let result = try await client.call(Images.Create(
@@ -235,13 +238,24 @@ struct ImagesEditCommand: AsyncParsableCommand {
     let client = client.new()
     let format = format.new()
     
+    let prompt = try input.getValue()
+
+    if !toJson.enabled {
+      format.print(title: "Image Edit")
+      
+      format.print(label: "Input", value: prompt, verbose: true)
+      format.print(label: "Size", value: size?.rawValue, verbose: true)
+      format.println(verbose: true)
+      
+      format.print(info: "Sending request...")
+      format.println()
+    }
+    
     let imageUrl = URL(fileURLWithPath: image)
     let imageData = try Data(contentsOf: imageUrl)
     
     let maskUrl = URL(fileURLWithPath: mask)
     let maskData = try Data(contentsOf: maskUrl)
-    
-    let prompt = try input.getValue()
     
     let result = try await client.call(Images.Edit(
       image: imageData,
@@ -257,13 +271,14 @@ struct ImagesEditCommand: AsyncParsableCommand {
       format.print(text: try toJson.encode(value: result))
     } else {
       let targetFolder = URL(fileURLWithPath: outputFolder ?? "")
-      
-      format.print(title: "Image Edit")
-      format.print(label: "Input", value: prompt, verbose: true)
-      format.print(label: "Size", value: size?.rawValue, verbose: true)
-      
+            
       format.print(subtitle: "Result", verbose: true)
       format.print(label: "Created", value: result.created, verbose: true)
+      format.println(verbose: true)
+      
+      let filename = imageName(prefix: "create", created: result.created, index: nil, suffix: prompt)
+      let promptUrl = URL(fileURLWithPath: "\(filename).txt", relativeTo: targetFolder)
+      try prompt.write(to: promptUrl, atomically: true, encoding: .utf8)
       
       let indented = format.indented(by: 2)
 
@@ -340,6 +355,16 @@ struct ImagesVariationCommand: AsyncParsableCommand {
   func run() async throws {
     let client = client.new()
     let format = format.new()
+    
+    if !toJson.enabled {
+      format.print(title: "Image Variations")
+      
+      format.print(label: "Size", value: size?.rawValue, verbose: true)
+      format.println(verbose: true)
+
+      format.print(info: "Sending request...")
+      format.println()
+    }
 
     let imageUrl = URL(fileURLWithPath: image)
     let imageData = try Data(contentsOf: imageUrl)
@@ -356,10 +381,7 @@ struct ImagesVariationCommand: AsyncParsableCommand {
       format.print(text: try toJson.encode(value: result))
     } else {
       let targetFolder = URL(fileURLWithPath: outputFolder ?? "")
-      
-      format.print(title: "Image Variations")
-      format.print(label: "Size", value: size?.rawValue, verbose: true)
-      
+            
       format.print(subtitle: "Result", verbose: true)
       format.print(label: "Created", value: result.created, verbose: true)
       
