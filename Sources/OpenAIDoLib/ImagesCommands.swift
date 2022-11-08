@@ -16,6 +16,8 @@ struct ImagesCommand: AsyncParsableCommand {
   )
 }
 
+let maxPromptFileLength = 100
+
 /// Creates a filename given the `created` `Date`, image index, and prompt. It does not include a file extension.
 ///
 /// - Parameters:
@@ -24,7 +26,7 @@ struct ImagesCommand: AsyncParsableCommand {
 ///   - index: The image index.
 ///   - prompt: The prompt that created the image.
 /// - Returns: The filename.
-fileprivate func imageName(prefix: String, created: Date, index: Int, suffix: String?) -> String {
+fileprivate func imageName(prefix: String, created: Date, index: Int?, suffix: String?) -> String {
   var result = "\(prefix) - "
   
   let createdValue = ISO8601DateFormatter.string(from: created, timeZone: .current, formatOptions: [.withFullDate, .withFullTime])
@@ -33,7 +35,7 @@ fileprivate func imageName(prefix: String, created: Date, index: Int, suffix: St
   
   let indexFormatter = NumberFormatter()
   indexFormatter.minimumIntegerDigits = 2
-  if let indexValue = indexFormatter.string(for: index+1) {
+  if let index = index, let indexValue = indexFormatter.string(for: index+1) {
     result.append(" (\(indexValue))")
   }
   
@@ -42,7 +44,14 @@ fileprivate func imageName(prefix: String, created: Date, index: Int, suffix: St
     if suffix.last == "." {
       suffix = suffix.dropLast(1)
     }
-    result.append(String(suffix))
+    if suffix.count > maxPromptFileLength {
+      var trimmed = String(suffix[..<suffix.index(suffix.startIndex, offsetBy: maxPromptFileLength/2)])
+      trimmed.append("…")
+      trimmed.append(String(suffix[suffix.index(suffix.endIndex, offsetBy: -(maxPromptFileLength/2-(1-maxPromptFileLength%2)))...]))
+      result.append(trimmed)
+    } else {
+      result.append(String(suffix))
+    }
   }
   
   return result.whitespaceCondensed().sanitized(replacement: "_")
@@ -106,6 +115,14 @@ struct ImagesCreateCommand: AsyncParsableCommand {
     
     let prompt = try input.getValue()
     
+    if !toJson.enabled {
+      format.print(title: "Image Create")
+      format.print(label: "Input", value: prompt, verbose: true)
+      format.print(label: "Size", value: size?.rawValue, verbose: true)
+      
+      format.print(info: "Sending request...")
+    }
+    
     let result = try await client.call(Images.Create(
       prompt: prompt,
       n: n,
@@ -119,14 +136,14 @@ struct ImagesCreateCommand: AsyncParsableCommand {
     } else {
       let targetFolder = URL(fileURLWithPath: outputFolder ?? "")
       
-      format.print(title: "Image Create")
-      format.print(label: "Input", value: prompt, verbose: true)
-      format.print(label: "Size", value: size?.rawValue, verbose: true)
-      
       format.print(subtitle: "Result", verbose: true)
       format.print(label: "Created", value: result.created, verbose: true)
       
       let indented = format.indented(by: 2)
+
+      let filename = imageName(prefix: "create", created: result.created, index: nil, suffix: prompt)
+      let promptUrl = URL(fileURLWithPath: "\(filename).txt", relativeTo: targetFolder)
+      try prompt.write(to: promptUrl, atomically: true, encoding: .utf8)
 
       for (i, image) in result.images.enumerated() {
         
