@@ -102,6 +102,11 @@ struct Format {
     Format.print("\n")
   }
   
+  func print(info message: CustomStringConvertible, verbose: Bool = false) {
+    guard !verbose || showVerbose else { return }
+    print(text: Italic { String(describing: message) })
+  }
+  
   /// Prints an error message
   ///
   ///- Parameter error: The message to output
