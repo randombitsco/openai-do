@@ -1,79 +1,77 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "MultipartForm",
-        "repositoryURL": "https://github.com/davbeck/MultipartForm",
-        "state": {
-          "branch": null,
-          "revision": "c91979ea956a360bf84f0cc480afbcc7c946c753",
-          "version": "0.1.0"
-        }
-      },
-      {
-        "package": "Prism",
-        "repositoryURL": "https://github.com/jordanbaird/Prism",
-        "state": {
-          "branch": null,
-          "revision": "9bb480683de5d527a87a994c8a55ac188158bb14",
-          "version": "0.0.9"
-        }
-      },
-      {
-        "package": "swift-argument-parser",
-        "repositoryURL": "https://github.com/apple/swift-argument-parser.git",
-        "state": {
-          "branch": "main",
-          "revision": "5535a95838c6e9ef0e24c48a200a8faf879e418a",
-          "version": null
-        }
-      },
-      {
-        "package": "swift-case-paths",
-        "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
-        "state": {
-          "branch": null,
-          "revision": "bb436421f57269fbcfe7360735985321585a86e5",
-          "version": "0.10.1"
-        }
-      },
-      {
-        "package": "swift-custom-dump",
-        "repositoryURL": "https://github.com/pointfreeco/swift-custom-dump",
-        "state": {
-          "branch": null,
-          "revision": "819d9d370cd721c9d87671e29d947279292e4541",
-          "version": "0.6.0"
-        }
-      },
-      {
-        "package": "swift-openai-bits",
-        "repositoryURL": "/Users/david/Development/Projects/randombitsco/swift-openai-bits",
-        "state": {
-          "branch": "main",
-          "revision": "2cb90709e28349c8538a9c8113b94afd84569316",
-          "version": null
-        }
-      },
-      {
-        "package": "swift-parsing",
-        "repositoryURL": "https://github.com/pointfreeco/swift-parsing",
-        "state": {
-          "branch": null,
-          "revision": "bc92e84968990b41640214b636667f35b6e5d44c",
-          "version": "0.10.0"
-        }
-      },
-      {
-        "package": "xctest-dynamic-overlay",
-        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
-        "state": {
-          "branch": null,
-          "revision": "16e6409ee82e1b81390bdffbf217b9c08ab32784",
-          "version": "0.5.0"
-        }
+  "pins" : [
+    {
+      "identity" : "multipartform",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/davbeck/MultipartForm",
+      "state" : {
+        "revision" : "c91979ea956a360bf84f0cc480afbcc7c946c753",
+        "version" : "0.1.0"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "prism",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jordanbaird/Prism",
+      "state" : {
+        "revision" : "9bb480683de5d527a87a994c8a55ac188158bb14",
+        "version" : "0.0.9"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "8f7e87bd0e0e1c96ae5d1622871820149b8e8c2d"
+      }
+    },
+    {
+      "identity" : "swift-case-paths",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-case-paths",
+      "state" : {
+        "revision" : "bb436421f57269fbcfe7360735985321585a86e5",
+        "version" : "0.10.1"
+      }
+    },
+    {
+      "identity" : "swift-custom-dump",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-custom-dump",
+      "state" : {
+        "revision" : "ead7d30cc224c3642c150b546f4f1080d1c411a8",
+        "version" : "0.6.1"
+      }
+    },
+    {
+      "identity" : "swift-openai-bits",
+      "kind" : "localSourceControl",
+      "location" : "/Users/david/Development/Projects/randombitsco/swift-openai-bits",
+      "state" : {
+        "branch" : "main",
+        "revision" : "8f6a605d83cdd6ef5f3454c4c47c54ab5928b149"
+      }
+    },
+    {
+      "identity" : "swift-parsing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-parsing",
+      "state" : {
+        "revision" : "bc92e84968990b41640214b636667f35b6e5d44c",
+        "version" : "0.10.0"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "5a5457a744239896e9b0b03a8e1a5069c3e7b91f",
+        "version" : "0.6.0"
+      }
+    }
+  ],
+  "version" : 2
 }

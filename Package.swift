@@ -1,4 +1,4 @@
-// swift-tools-version: 5.5
+// swift-tools-version: 5.6
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -10,7 +10,6 @@ let package = Package(
     ],
     products: [
         .executable(name: "openai-do", targets: ["OpenAIDo"]),
-//        .library(name: "OpenAIDo", targets: ["OpenAIDo"]),
     ],
     dependencies: [
 //        .package(url: "https://github.com/randombitsco/swift-openai-bits", branch: "main"),

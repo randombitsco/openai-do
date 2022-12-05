@@ -35,7 +35,7 @@ struct CompletionsCreateCommand: AsyncParsableCommand {
       case .ada: return .text_ada_001
       case .babbage: return .text_babbage_001
       case .curie: return .text_curie_001
-      case .davinci: return .text_davinci_002
+      case .davinci: return .text_davinci_003
       case .codex: return .code_davinci_001
       }
     }    
