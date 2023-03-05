@@ -6,7 +6,7 @@ import OpenAIBits
 
 // MARK: Completions.Stop
 
-extension Completions.Stop: ExpressibleByArgument {
+extension Stop: ExpressibleByArgument {
   public init?(argument: String) {
     self.init(argument)
   }

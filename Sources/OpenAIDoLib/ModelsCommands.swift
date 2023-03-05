@@ -59,7 +59,7 @@ struct ModelsListCommand: AsyncParsableCommand {
     }
     
     if embeddings {
-      models = models.filter { $0.supportsEmbedding }
+      models = models.filter { $0.supportsEmbeddings }
     }
     
     if fineTuned {

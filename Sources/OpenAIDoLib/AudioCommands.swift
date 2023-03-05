@@ -10,7 +10,7 @@ struct AudioCommand: AsyncParsableCommand {
     abstract: "Commands relating to audio.",
     subcommands: [
       AudioTranscriptionsCommand.self,
-      // AudioTranslationsCommand.self,
+      AudioTranslationsCommand.self,
     ]
   )
 }
@@ -20,341 +20,229 @@ struct AudioCommand: AsyncParsableCommand {
 struct AudioTranscriptionsCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "transcriptions",
-    abstract: "Transcribes an audio file."
+    abstract: "Transcribes an audio recording."
   )
   
   /// The path to the input text file.
-  @Option(name: [.customLong("input-file")], help: "The audio file to transcribe, in one of these formats: `mp3`, `mp4`, `mpeg`, `mpga`, `m4a`, `wav`, or `webm`.", completion: .file())
-  var inputFile: String
+  @Option(name: [.customLong("audio-file")], help: "The file containing the audio to transcribe, in one of these formats: `mp3`, `mp4`, `mpeg`, `mpga`, `m4a`, `wav`, or `webm`.", completion: .file())
+  var audioFile: String
 
-  var model: Model.ID
-  
-  @Option(help: "The format of the transcript output, in one of these options: `json`, `text`, `srt`, `verbose_json`, or `vtt`. Defaults to `json`.")
-  var responseFormat: Audio.ResponseFormat?
-  
-  @Option(help: """
-  A unique identifier representing your end-user, which will help OpenAI to monitor and detect abuse.
-  """)
-  var user: String?
-  
-  @Option(help: "The path to the output folder for generated images. (defaults to current working directory)")
-  var outputFolder: String?
-  
-  @OptionGroup var toJson: ToJSONFrom<Generations>
-  
-  @OptionGroup var client: ClientOptions
-  
-  var format: FormatOptions { client.format }
-  
-  func validate() throws {
-    if let n = n, n < 1 || n > 10 {
-      throw ValidationError("-n must be between 1 and 10")
-    }
-  }
-  
-  func run() async throws {
-    let client = client.new()
-    let format = format.new()
-    
-    let prompt = try input.getValue()
-    
-    if !toJson.enabled {
-      format.print(title: "Image Create")
-      
-      format.print(label: "Input", value: prompt, verbose: true)
-      format.print(label: "Size", value: size?.rawValue, verbose: true)
-      format.println(verbose: true)
-      
-      format.print(info: "Sending request...")
-      format.println()
-    }
-    
-    let result = try await client.call(Images.Create(
-      prompt: prompt,
-      n: n,
-      size: size,
-      responseFormat: responseFormat ?? .data,
-      user: user
-    ))
-    
-    if toJson.enabled {
-      format.print(text: try toJson.encode(value: result))
-    } else {
-      let targetFolder = URL(fileURLWithPath: outputFolder ?? "")
-      
-      format.print(subtitle: "Result", verbose: true)
-      format.print(label: "Created", value: result.created, verbose: true)
-      
-      let indented = format.indented(by: 2)
-
-      let filename = imageName(prefix: "create", created: result.created, index: nil, suffix: prompt)
-      let promptUrl = URL(fileURLWithPath: "\(filename).txt", relativeTo: targetFolder)
-      try prompt.write(to: promptUrl, atomically: true, encoding: .utf8)
-
-      for (i, image) in result.images.enumerated() {
-        
-        format.print(section: "Image \(i+1)")
-        if case let .url(url) = image {
-          indented.print(label: "URL", value: url, verbose: true)
-        }
-
-        let filename = imageName(prefix: "create", created: result.created, index: i, suffix: prompt)
-        let fileUrl = URL(fileURLWithPath: "\(filename).png", relativeTo: targetFolder)
-        
-        do {
-          let data = try image.getData()
-          try image.getData().write(to: fileUrl)
-          
-          indented.print(label: "Path", value: fileUrl.absoluteString)
-          
-          let sizeValue = ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .binary)
-          
-          indented.print(label: "Size", value: sizeValue)
-        } catch {
-          indented.print(error: "Unable to save image #\(i).")
-          throw error
-        }
-      }
-    }
-  }
-}
-
-// MARK: edit
-
-struct ImagesEditCommand: AsyncParsableCommand {
-  static var configuration = CommandConfiguration(
-    commandName: "edit",
-    abstract: "Creates an edited or extended image given an original image and a prompt."
-  )
-  
-  @Option(help: "The path to the image to edit. Must be a valid PNG file, less than 4MB, and square.")
-  var image: String
-  
-  @Option(help: "An additional image whose fully transparent areas (e.g. where alpha is zero) indicate where image should be edited. Must be a valid PNG file, less than 4MB, and have the same dimensions as --image.")
-  var mask: String
+  @Option(help: "The model to use for transcription. Must be an audio model.")
+  var model: Model.ID = .whisper_1
   
   struct Help: InputHelp {
-    
+    static var inputValueOptionName: String { "prompt" }
+    static var inputFileOptionName: String { "prompt-file" }
+
     static var inputValueHelp: String {
-      "A text description of the desired image(s). The maximum length is 1000 characters."
+      """
+      An optional text to guide the model's style or continue a previous audio segment. It should match the audio language.
+      
+      See: https://platform.openai.com/docs/guides/speech-to-text/prompting
+      """
     }
     
     static var inputFileHelp: String {
-      "The path to a file containing the image input prompt to create generations for. Provide either this or --input, not both."
+      "The path to a file containing the text prompt to create generations for. Provide either this or --prompt, not both."
     }
+
+    static var optional: Bool { true }
   }
+
+  @OptionGroup var prompt: InputOptions<Help>
   
-  @OptionGroup var input: InputOptions<Help>
-  
-  @Option(name: .short, help: """
-  The number of images to generate. Must be between 1 and 10. (defaults to 1)
-  """)
-  var n: Int?
-  
-  @Option(help: "The size of the generated images. Must be one of '256x256', '512x512', or '1024x1024'. (defaults to '1024x1024')")
-  var size: Images.Size?
-  
-  @Option(help: "The format in which the generated images are returned. Must be one of 'url' or 'data'. (defaults to 'data'")
-  var responseFormat: Images.ResponseFormat?
-  
-  @Option(help: """
-  A unique identifier representing your end-user, which will help OpenAI to monitor and detect abuse.
-  """)
-  var user: String?
-  
-  @Option(help: "The path to the output folder for generated images. (defaults to current working directory)")
-  var outputFolder: String?
-  
-  @OptionGroup var toJson: ToJSONFrom<Generations>
+  @Option(help: "The format of the transcript output, in one of these options: `json`, `text`, `srt`, `verbose_json`, or `vtt`. (default: json)")
+  var responseFormat: Audio.ResponseFormat?
+
+  @Option(help: "The sampling temperature, between `0` and `1`. Higher values like `0.8` will make the output more random, while lower values like `0.2` will make it more focused and deterministic. If set to `0`, the model will use log probability to automatically increase the temperature until certain thresholds are hit.")
+  public var temperature: Percentage?
+
+  @Option(help: "The 2-3 character language code of the input audio. (eg. 'en', 'ja')")
+  var language: Language?
+
+  @Option(help: "The file to save the transcript to. If not provided, the transcript will be printed to the console.")
+  var outputFile: String?
   
   @OptionGroup var client: ClientOptions
   
   var format: FormatOptions { client.format }
   
-  func validate() throws {
-    if let n = n, n < 1 || n > 10 {
-      throw ValidationError("-n must be between 1 and 10")
-    }
-  }
+  func validate() throws {}
   
   func run() async throws {
     let client = client.new()
     let format = format.new()
     
-    let prompt = try input.getValue()
-
-    if !toJson.enabled {
-      format.print(title: "Image Edit")
+    let audioUrl = URL(fileURLWithPath: audioFile)
+    let audioData: Data
+    do {
+      audioData = try Data(contentsOf: audioUrl)
+    } catch {
+      format.print(error: "Unable to load audio source file: \(audioFile)")
+      throw error
+    }
+    
+    let prompt = try prompt.getOptionalValue()
+    
+    if outputFile == nil {
+      format.print(title: "Audio Transcription")
       
-      format.print(label: "Input", value: prompt, verbose: true)
-      format.print(label: "Size", value: size?.rawValue, verbose: true)
-      format.println(verbose: true)
+      if let prompt {
+        format.print(label: "Prompt", value: prompt, verbose: true)
+        format.println(verbose: true)
+      }
       
       format.print(info: "Sending request...")
       format.println()
     }
     
-    let imageUrl = URL(fileURLWithPath: image)
-    let imageData = try Data(contentsOf: imageUrl)
-    
-    let maskUrl = URL(fileURLWithPath: mask)
-    let maskData = try Data(contentsOf: maskUrl)
-    
-    let result = try await client.call(Images.Edit(
-      image: imageData,
-      mask: maskData,
+    let result = try await client.call(Audio.Transcriptions(
+      file: audioData,
+      fileName: audioUrl.lastPathComponent,
+      model: model,
       prompt: prompt,
-      n: n,
-      size: size,
-      responseFormat: responseFormat ?? .data,
-      user: user
+      responseFormat: responseFormat,
+      temperature: temperature,
+      language: language
     ))
     
-    if toJson.enabled {
-      format.print(text: try toJson.encode(value: result))
-    } else {
-      let targetFolder = URL(fileURLWithPath: outputFolder ?? "")
-            
-      format.print(subtitle: "Result", verbose: true)
-      format.print(label: "Created", value: result.created, verbose: true)
-      format.println(verbose: true)
-      
-      let filename = imageName(prefix: "create", created: result.created, index: nil, suffix: prompt)
-      let promptUrl = URL(fileURLWithPath: "\(filename).txt", relativeTo: targetFolder)
-      try prompt.write(to: promptUrl, atomically: true, encoding: .utf8)
-      
-      let indented = format.indented(by: 2)
-
-      for (i, image) in result.images.enumerated() {
-        
-        format.print(section: "Image \(i+1)")
-        if case let .url(url) = image {
-          indented.print(label: "URL", value: url, verbose: true)
-        }
-
-        let filename = imageName(prefix: "edit", created: result.created, index: i, suffix: prompt)
-        let fileUrl = URL(fileURLWithPath: "\(filename).png", relativeTo: targetFolder)
-        
-        do {
-          let data = try image.getData()
-          try image.getData().write(to: fileUrl)
-          
-          indented.print(label: "Path", value: fileUrl.absoluteString)
-          
-          let sizeValue = ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .binary)
-          
-          indented.print(label: "Size", value: sizeValue)
-        } catch {
-          indented.print(error: "Unable to save image #\(i).")
-          throw error
-        }
+    if let outputFile {
+      let outputUrl = URL(fileURLWithPath: outputFile)
+      let resultText = try result.textValue()
+      do {
+        try resultText.write(to: outputUrl, atomically: true, encoding: .utf8)
+      } catch {
+        format.print(error: "Unable to save transcript to file: \(outputFile)")
+        throw error
       }
+    } else {
+      format.print(subtitle: "Result")
+      format.println()
+      format.print(text: try result.textValue())
     }
   }
 }
 
-// MARK: variation
+// MARK: Audio.Translations
 
-struct ImagesVariationCommand: AsyncParsableCommand {
-  static var configuration = CommandConfiguration(
-    commandName: "variation",
-    abstract: "Creates a variation of a given image."
+struct AudioTranslationsCommand: AsyncParsableCommand {
+    static var configuration = CommandConfiguration(
+    commandName: "translations",
+    abstract: "Translates an audio recording into English."
   )
   
-  @Option(help: "The path to the image to edit. Must be a valid PNG file, less than 4MB, and square.", completion: .file(extensions: [".png"]))
-  var image: String
+  /// The path to the input text file.
+  @Option(name: [.customLong("audio-file")], help: "The file containing the audio to transcribe, in one of these formats: `mp3`, `mp4`, `mpeg`, `mpga`, `m4a`, `wav`, or `webm`.", completion: .file())
+  var audioFile: String
+
+  @Option(help: "The model to use for transcription. Must be an audio model.")
+  var model: Model.ID = .whisper_1
   
-  @Option(name: .short, help: """
-  The number of images to generate. Must be between 1 and 10. (defaults to 1)
-  """)
-  var n: Int?
+  struct Help: InputHelp {
+    static var inputValueOptionName: String { "prompt" }
+    static var inputFileOptionName: String { "prompt-file" }
+
+    static var inputValueHelp: String {
+      """
+      An optional text to guide the model's style or continue a previous audio segment. It should match the audio language.
+      
+      See: https://platform.openai.com/docs/guides/speech-to-text/prompting
+      """
+    }
+    
+    static var inputFileHelp: String {
+      "The path to a file containing the text prompt to create generations for. Provide either this or --prompt, not both."
+    }
+
+    static var optional: Bool { true }
+  }
+
+  @OptionGroup var prompt: InputOptions<Help>
   
-  @Option(help: "The size of the generated images. Must be one of '256x256', '512x512', or '1024x1024'. (defaults to '1024x1024')")
-  var size: Images.Size?
-  
-  @Option(help: "The format in which the generated images are returned. Must be one of 'url' or 'data'. (defaults to 'data'")
-  var responseFormat: Images.ResponseFormat?
-  
-  @Option(help: """
-  A unique identifier representing your end-user, which will help OpenAI to monitor and detect abuse.
-  """)
-  var user: String?
-  
-  @Option(help: "The path to the output folder for generated images. (defaults to current working directory)")
-  var outputFolder: String?
-  
-  @OptionGroup var toJson: ToJSONFrom<Generations>
+  @Option(help: "The format of the transcript output, in one of these options: `json`, `text`, `srt`, `verbose_json`, or `vtt`. (default: json)")
+  var responseFormat: Audio.ResponseFormat?
+
+  @Option(help: "The sampling temperature, between `0` and `1`. Higher values like `0.8` will make the output more random, while lower values like `0.2` will make it more focused and deterministic. If set to `0`, the model will use log probability to automatically increase the temperature until certain thresholds are hit.")
+  public var temperature: Percentage?
+
+  @Option(help: "The file to save the transcript to. If not provided, the transcript will be printed to the console.")
+  var outputFile: String?
   
   @OptionGroup var client: ClientOptions
   
   var format: FormatOptions { client.format }
   
-  func validate() throws {
-    if let n = n, n < 1 || n > 10 {
-      throw ValidationError("-n must be between 1 and 10")
-    }
-  }
+  func validate() throws {}
   
   func run() async throws {
     let client = client.new()
     let format = format.new()
     
-    if !toJson.enabled {
-      format.print(title: "Image Variations")
+    let audioUrl = URL(fileURLWithPath: audioFile)
+    let audioData: Data
+    do {
+      audioData = try Data(contentsOf: audioUrl)
+    } catch {
+      format.print(error: "Unable to load audio source file: \(audioFile)")
+      throw error
+    }
+    
+    let prompt = try prompt.getOptionalValue()
+    
+    if outputFile == nil {
+      format.print(title: "Audio Translation into English")
       
-      format.print(label: "Size", value: size?.rawValue, verbose: true)
-      format.println(verbose: true)
+      if let prompt {
+        format.print(label: "Prompt", value: prompt, verbose: true)
+        format.println(verbose: true)
+      }
 
       format.print(info: "Sending request...")
       format.println()
     }
-
-    let imageUrl = URL(fileURLWithPath: image)
-    let imageData = try Data(contentsOf: imageUrl)
     
-    let result = try await client.call(Images.Variation(
-      image: imageData,
-      n: n,
-      size: size,
-      responseFormat: responseFormat ?? .data,
-      user: user
+    let result = try await client.call(Audio.Translations(
+      file: audioData,
+      fileName: audioUrl.lastPathComponent,
+      model: model,
+      prompt: prompt,
+      responseFormat: responseFormat,
+      temperature: temperature
     ))
     
-    if toJson.enabled {
-      format.print(text: try toJson.encode(value: result))
-    } else {
-      let targetFolder = URL(fileURLWithPath: outputFolder ?? "")
-            
-      format.print(subtitle: "Result", verbose: true)
-      format.print(label: "Created", value: result.created, verbose: true)
-      
-      let indented = format.indented(by: 2)
-
-      for (i, image) in result.images.enumerated() {
-        
-        format.print(section: "Image \(i+1)")
-        if case let .url(url) = image {
-          indented.print(label: "URL", value: url, verbose: true)
-        }
-
-        let imageFileName = imageUrl.deletingPathExtension().lastPathComponent
-        let filename = imageName(prefix: "variation", created: result.created, index: i, suffix: imageFileName)
-        let fileUrl = URL(fileURLWithPath: "\(filename).png", relativeTo: targetFolder)
-        
-        do {
-          let data = try image.getData()
-          try image.getData().write(to: fileUrl)
-          
-          indented.print(label: "Path", value: fileUrl.absoluteString)
-          
-          let sizeValue = ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .binary)
-          
-          indented.print(label: "Size", value: sizeValue)
-        } catch {
-          indented.print(error: "Unable to save image #\(i).")
-          throw error
-        }
+    if let outputFile {
+      let outputUrl = URL(fileURLWithPath: outputFile)
+      let resultText = try result.textValue()
+      do {
+        try resultText.write(to: outputUrl, atomically: true, encoding: .utf8)
+      } catch {
+        format.print(error: "Unable to save transcript to file: \(outputFile)")
+        throw error
       }
+    } else {
+      format.print(subtitle: "Result")
+      format.println()
+      format.print(text: try result.textValue())
     }
+  }
+}
+
+// MARK: Audio.ResponseFormat + ExpressibleByArgument
+
+extension Audio.ResponseFormat: ExpressibleByArgument {
+  public init?(argument: String) {
+    guard let result = Self.init(rawValue: argument) else {
+      return nil
+    }
+    self = result
+  }
+}
+
+extension Language: ExpressibleByArgument {
+  public init?(argument: String) {
+    guard let result = Self.init(rawValue: argument) else {
+      return nil
+    }
+    self = result
   }
 }

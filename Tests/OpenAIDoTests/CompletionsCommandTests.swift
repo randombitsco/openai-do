@@ -8,7 +8,7 @@ import XCTest
 final class CompletionsCommandTests: OpenAIDoTestCase {
   
   func testSimple() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "--input", "ABC")
+    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "--input", "ABC")
         
     XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.model.modelId, "foobar")
@@ -18,7 +18,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     //    try await cmd.run()
     try await XCTAssertExpectOpenAICall {
-      Completions.Create(model: "foobar", prompt: "ABC")
+      Text.Completions(model: "foobar", prompt: "ABC")
     } response: {
       Completion(
         id: "success", created: now, model: "foobar",
@@ -48,7 +48,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testBlankText() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "-i", "ABC")
+    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "-i", "ABC")
         
     XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.model.modelId, "foobar")
@@ -58,7 +58,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     //    try await cmd.run()
     try await XCTAssertExpectOpenAICall {
-      Completions.Create(model: "foobar", prompt: "ABC")
+      Text.Completions(model: "foobar", prompt: "ABC")
     } response: {
       Completion(
         id: "success", created: now, model: "foobar",
@@ -88,7 +88,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testTwoChoices() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "-n", "2", "-i", "ABC")
+    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "-n", "2", "-i", "ABC")
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.n, 2)
@@ -97,7 +97,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     let now = Date()
     
     try await XCTAssertExpectOpenAICall {
-      Completions.Create(model: "foobar", prompt: "ABC", n: 2)
+      Text.Completions(model: "foobar", prompt: "ABC", n: 2)
     } response: {
       .init(
         id: "success", created: now, model: "foobar",
@@ -136,7 +136,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testToJSON() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "-n", "2", "--to-json", "--pretty", "-i", "ABC")
+    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "-n", "2", "--to-json", "--pretty", "-i", "ABC")
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.n, 2)
@@ -146,7 +146,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     let now = Date()
     
     try await XCTAssertExpectOpenAICall {
-      Completions.Create(model: "foobar", prompt: "ABC", n: 2)
+      Text.Completions(model: "foobar", prompt: "ABC", n: 2)
     } response: {
       .init(
         id: "success", created: now, model: "foobar",
@@ -189,7 +189,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
 
   func testSingleLogitBias() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "--logit-bias", "1234:10", "-i", "ABC")
+    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "--logit-bias", "1234:10", "-i", "ABC")
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.logitBias, "1234:10")
@@ -198,7 +198,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     let now = Date()
     
     try await XCTAssertExpectOpenAICall {
-      Completions.Create(model: "foobar", prompt: "ABC", logitBias: [1234:10])
+      Text.Completions(model: "foobar", prompt: "ABC", logitBias: [1234:10])
     } response: {
       .init(
         id: "success", created: now, model: "foobar",
@@ -228,7 +228,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
 
   func testMultipleLogitBiases() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "--logit-bias", "1234:10,5678:20", "-i", "ABC")
+    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "--logit-bias", "1234:10,5678:20", "-i", "ABC")
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.logitBias, "1234:10,5678:20")
@@ -237,7 +237,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     let now = Date()
     
     try await XCTAssertExpectOpenAICall {
-      Completions.Create(model: "foobar", prompt: "ABC", logitBias: [1234:10, 5678:20])
+      Text.Completions(model: "foobar", prompt: "ABC", logitBias: [1234:10, 5678:20])
     } response: {
       .init(
         id: "success", created: now, model: "foobar",
@@ -267,7 +267,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testMultiLineText() async throws {
-    var cmd: CompletionsCreateCommand = try parse(
+    var cmd: TextCompletionsCommand = try parse(
       "completions",
       "create",
       "--model-id", "foobar",
@@ -281,7 +281,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     let now = Date()
     
     try await XCTAssertExpectOpenAICall {
-      Completions.Create(model: "foobar", prompt: "ABC")
+      Text.Completions(model: "foobar", prompt: "ABC")
     } response: {
       .init(
         id: "success", created: now, model: "foobar",
@@ -312,7 +312,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testMultipleMultiLineText() async throws {
-    var cmd: CompletionsCreateCommand = try parse(
+    var cmd: TextCompletionsCommand = try parse(
       "completions",
       "create",
       "--model-id", "foobar",
@@ -328,7 +328,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     let now = Date()
     
     try await XCTAssertExpectOpenAICall {
-      Completions.Create(model: "foobar", prompt: "ABC", n: 2)
+      Text.Completions(model: "foobar", prompt: "ABC", n: 2)
     } response: {
       .init(
         id: "success", created: now, model: "foobar",
@@ -367,7 +367,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testAllArguments() async throws {
-    var cmd: CompletionsCreateCommand = try parse(
+    var cmd: TextCompletionsCommand = try parse(
       "completions",
       "create",
       "--model-id", "foobar",
@@ -393,7 +393,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     let now = Date()
     
     try await XCTAssertExpectOpenAICall {
-      Completions.Create(
+      Text.Completions(
         model: "foobar",
         prompt: "ABC",
         suffix: "foo",
@@ -439,7 +439,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testVerbose() async throws {
-    var cmd: CompletionsCreateCommand = try parse("completions", "create", "--model-id", "foobar", "--verbose", "-i", "ABC", "--logprobs", "2")
+    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "--verbose", "-i", "ABC", "--logprobs", "2")
         
     XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.client.format.verbose, true)
@@ -450,7 +450,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
     
     //    try await cmd.run()
     try await XCTAssertExpectOpenAICall {
-      Completions.Create(model: "foobar", prompt: "ABC", logprobs: 2)
+      Text.Completions(model: "foobar", prompt: "ABC", logprobs: 2)
     } response: {
       Completion(
         id: "success", created: now, model: "foobar",

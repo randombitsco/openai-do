@@ -22,9 +22,9 @@ public struct OpenAIDo: AsyncParsableCommand {
     
     subcommands: [
       ModelsCommand.self,
-      CompletionsCommand.self,
-      EditsCommand.self,
+      TextCommand.self,
       ImagesCommand.self,
+      AudioCommand.self,
       EmbeddingsCommand.self,
       FilesCommand.self,
       FineTunesCommand.self,

@@ -454,7 +454,7 @@ struct Format {
     print(label: "Is Fine-Tune", value: model.isFineTune)
     print(label: "Supports Code", value: model.supportsCode)
     print(label: "Supports Edit", value: model.supportsEdit)
-    print(label: "Supports Embedding", value: model.supportsEmbedding)
+    print(label: "Supports Embedding", value: model.supportsEmbeddings)
     
     print(section: "Permissions")
     indented(by: 2).print(list: model.permission, with: Format.print(permission:))
