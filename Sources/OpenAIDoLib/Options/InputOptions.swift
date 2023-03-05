@@ -15,10 +15,10 @@ struct InputOptions<Config: InputHelp>: ParsableArguments {
     switch (value, file) {
     case (.none, .none):
       if !Config.optional {
-        throw ValidationError("Provide either --input or --input-file.")
+        throw ValidationError("Provide either --\(Config.inputValueOptionName) or --\(Config.inputFileOptionName).")
       }
     case (.some, .some):
-      throw ValidationError("Provide either --input or --input-file, not both.")
+      throw ValidationError("Provide either --\(Config.inputValueOptionName) or --\(Config.inputFileOptionName), not both.")
     default:
       break
     }
@@ -28,11 +28,11 @@ struct InputOptions<Config: InputHelp>: ParsableArguments {
     switch (value, file) {
     case (.none, .none):
       if !Config.optional {
-        throw ValidationError("Provide either --input or --input-file.")
+        throw ValidationError("Provide either --\(Config.inputValueOptionName) or --\(Config.inputFileOptionName).")
       }
       return ""
     case (.some, .some):
-      throw ValidationError("Provide either --input or --input-file, not both.")
+      throw ValidationError("Provide either --\(Config.inputValueOptionName) or --\(Config.inputFileOptionName), not both.")
     case (.some(let input), _):
       return input
     case (_, .some(let inputFile)):

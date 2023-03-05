@@ -202,7 +202,7 @@ struct TextCompletionsCommand: AsyncParsableCommand {
     if toJson.enabled {
       format.print(text: try toJson.encode(value: result))
     } else {
-      format.print(title: "Create Completions")
+      format.print(title: "Text Completions")
       format.print(completion: result)
     }
   }
@@ -290,7 +290,7 @@ struct TextEditsCommand: AsyncParsableCommand {
     if toJson.enabled {
       format.print(text: try toJson.encode(value: result))
     } else {
-      format.print(title: "Edits")
+      format.print(title: "Text Edits")
       format.print(edit: result)
     }
   }

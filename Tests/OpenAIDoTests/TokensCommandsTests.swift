@@ -8,7 +8,7 @@ import XCTest
 final class TokensCountCommandTests: OpenAIDoTestCase {
   func testCount() async throws {
     var cmd: TokensCountCommand = try parse(
-      "tokens", "count", "-i", "Hello, world!"
+      "tokens", "count", "--input", "Hello, world!"
     )
     
     XCTAssertEqual(cmd.input.value, "Hello, world!")
@@ -42,7 +42,7 @@ final class TokensCountCommandTests: OpenAIDoTestCase {
 final class TokensEncodeCommandTests: OpenAIDoTestCase {
   func testEncode() async throws {
     var cmd: TokensEncodeCommand = try parse(
-      "tokens", "encode", "-i", "Hello, world!"
+      "tokens", "encode", "--input", "Hello, world!"
     )
     
     XCTAssertEqual(cmd.input.value, "Hello, world!")
@@ -62,7 +62,7 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
 
   func testEncodeToJSON() async throws {
     var cmd: TokensEncodeCommand = try parse(
-      "tokens", "encode", "-i", "Hello, world!", "--to-json"
+      "tokens", "encode", "--input", "Hello, world!", "--to-json"
     )
 
     XCTAssertEqual(cmd.input.value, "Hello, world!")
@@ -80,7 +80,7 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
   
   func testEncodeToJSONVerbose() async throws {
     var cmd: TokensEncodeCommand = try parse(
-      "tokens", "encode", "-i", "Hello, world!", "--to-json", "--pretty"
+      "tokens", "encode", "--input", "Hello, world!", "--to-json", "--pretty"
     )
 
     XCTAssertEqual(cmd.input.value, "Hello, world!")
@@ -107,7 +107,7 @@ final class TokensEncodeCommandTests: OpenAIDoTestCase {
 final class TokensDecodeCommandTests: OpenAIDoTestCase {
   func testDecodeIntegers() async throws {
     var cmd: TokensDecodeCommand = try parse(
-      "tokens", "decode", "-i", "15496", "11", "995", "0"
+      "tokens", "decode", "--input", "15496", "11", "995", "0"
     )
 
     XCTAssertEqual(cmd.input, ["15496", "11", "995", "0"])

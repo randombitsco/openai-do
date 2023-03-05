@@ -5,10 +5,10 @@ import OpenAIBitsTestHelpers
 @testable import OpenAIDoLib
 import XCTest
 
-final class CompletionsCommandTests: OpenAIDoTestCase {
+final class TextCompletionsCommandTests: OpenAIDoTestCase {
   
   func testSimple() async throws {
-    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "--input", "ABC")
+    var cmd: TextCompletionsCommand = try parse("text", "completions", "--model-id", "foobar", "--input", "ABC")
         
     XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.model.modelId, "foobar")
@@ -32,7 +32,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       try await cmd.run()
 
       XCTAssertNoDifference(printed, """
-      Create Completions
+      Text Completions
       
       Model: foobar
       Text:
@@ -48,7 +48,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testBlankText() async throws {
-    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "-i", "ABC")
+    var cmd: TextCompletionsCommand = try parse("text", "completions", "--model-id", "foobar", "--input", "ABC")
         
     XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.model.modelId, "foobar")
@@ -72,7 +72,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       try await cmd.run()
 
       XCTAssertNoDifference(printed, """
-      Create Completions
+      Text Completions
       
       Model: foobar
       Text:
@@ -88,7 +88,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testTwoChoices() async throws {
-    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "-n", "2", "-i", "ABC")
+    var cmd: TextCompletionsCommand = try parse("text", "completions", "--model-id", "foobar", "-n", "2", "--input", "ABC")
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.n, 2)
@@ -112,7 +112,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       try await cmd.run()
       
       XCTAssertNoDifference(printed, """
-      Create Completions
+      Text Completions
       
       Model: foobar
       Choices:
@@ -136,7 +136,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testToJSON() async throws {
-    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "-n", "2", "--to-json", "--pretty", "-i", "ABC")
+    var cmd: TextCompletionsCommand = try parse("text", "completions", "--model-id", "foobar", "-n", "2", "--to-json", "--pretty", "--input", "ABC")
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.n, 2)
@@ -189,7 +189,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
 
   func testSingleLogitBias() async throws {
-    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "--logit-bias", "1234:10", "-i", "ABC")
+    var cmd: TextCompletionsCommand = try parse("text", "completions", "--model-id", "foobar", "--logit-bias", "1234:10", "--input", "ABC")
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.logitBias, "1234:10")
@@ -212,7 +212,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       try await cmd.run()
       
       XCTAssertNoDifference(printed, """
-      Create Completions
+      Text Completions
       
       Model: foobar
       Text:
@@ -228,7 +228,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
 
   func testMultipleLogitBiases() async throws {
-    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "--logit-bias", "1234:10,5678:20", "-i", "ABC")
+    var cmd: TextCompletionsCommand = try parse("text", "completions", "--model-id", "foobar", "--logit-bias", "1234:10,5678:20", "--input", "ABC")
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
     XCTAssertEqual(cmd.logitBias, "1234:10,5678:20")
@@ -251,7 +251,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       try await cmd.run()
       
       XCTAssertNoDifference(printed, """
-      Create Completions
+      Text Completions
       
       Model: foobar
       Text:
@@ -268,10 +268,10 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   
   func testMultiLineText() async throws {
     var cmd: TextCompletionsCommand = try parse(
+      "text",
       "completions",
-      "create",
       "--model-id", "foobar",
-      "-i",
+      "--input",
       "ABC"
     )
     
@@ -295,7 +295,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       try await cmd.run()
       
       XCTAssertNoDifference(printed, """
-      Create Completions
+      Text Completions
       
       Model: foobar
       Text:
@@ -313,11 +313,11 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   
   func testMultipleMultiLineText() async throws {
     var cmd: TextCompletionsCommand = try parse(
+      "text",
       "completions",
-      "create",
       "--model-id", "foobar",
       "-n", "2",
-      "-i",
+      "--input",
       "ABC"
     )
     
@@ -343,7 +343,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       try await cmd.run()
       
       XCTAssertNoDifference(printed, """
-      Create Completions
+      Text Completions
       
       Model: foobar
       Choices:
@@ -368,8 +368,8 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   
   func testAllArguments() async throws {
     var cmd: TextCompletionsCommand = try parse(
+      "text",
       "completions",
-      "create",
       "--model-id", "foobar",
       "--suffix", "foo",
       "--max-tokens", "100",
@@ -384,7 +384,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       "--best-of", "3",
       "--logit-bias", "50256:-100",
       "--user", "jblogs",
-      "-i", "ABC"
+      "--input", "ABC"
     )
     
     XCTAssertEqual(cmd.model.modelId, "foobar")
@@ -423,7 +423,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       try await cmd.run()
       
       XCTAssertNoDifference(printed, """
-      Create Completions
+      Text Completions
       
       Model: foobar
       Text:
@@ -439,7 +439,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
   }
   
   func testVerbose() async throws {
-    var cmd: TextCompletionsCommand = try parse("completions", "create", "--model-id", "foobar", "--verbose", "-i", "ABC", "--logprobs", "2")
+    var cmd: TextCompletionsCommand = try parse("text", "completions", "--model-id", "foobar", "--verbose", "--input", "ABC", "--logprobs", "2")
         
     XCTAssertEqual(cmd.client.findApiKey(), apiKey)
     XCTAssertEqual(cmd.client.format.verbose, true)
@@ -473,7 +473,7 @@ final class CompletionsCommandTests: OpenAIDoTestCase {
       try await cmd.run()
 
       XCTAssertNoDifference(printed, """
-      Create Completions
+      Text Completions
       
       ID: success
       Created: \(now.description)
