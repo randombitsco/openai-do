@@ -27,8 +27,8 @@ struct AudioTranscriptionsCommand: AsyncParsableCommand {
   @Option(name: [.customLong("audio-file")], help: "The file containing the audio to transcribe, in one of these formats: `mp3`, `mp4`, `mpeg`, `mpga`, `m4a`, `wav`, or `webm`.", completion: .file())
   var audioFile: String
 
-  @Option(help: "The model to use for transcription. Must be an audio model.")
-  var model: Model.ID = .whisper_1
+  @OptionGroup
+  var model: ModelOptions<AudioModel>
   
   struct Help: InputHelp {
     static var inputValueOptionName: String { "prompt" }
@@ -99,7 +99,7 @@ struct AudioTranscriptionsCommand: AsyncParsableCommand {
     let result = try await client.call(Audio.Transcriptions(
       file: audioData,
       fileName: audioUrl.lastPathComponent,
-      model: model,
+      model: model.findModelId(),
       prompt: prompt,
       responseFormat: responseFormat,
       temperature: temperature,
@@ -135,8 +135,8 @@ struct AudioTranslationsCommand: AsyncParsableCommand {
   @Option(name: [.customLong("audio-file")], help: "The file containing the audio to transcribe, in one of these formats: `mp3`, `mp4`, `mpeg`, `mpga`, `m4a`, `wav`, or `webm`.", completion: .file())
   var audioFile: String
 
-  @Option(help: "The model to use for transcription. Must be an audio model.")
-  var model: Model.ID = .whisper_1
+  @OptionGroup
+  var model: ModelOptions<AudioModel>
   
   struct Help: InputHelp {
     static var inputValueOptionName: String { "prompt" }
@@ -151,7 +151,7 @@ struct AudioTranslationsCommand: AsyncParsableCommand {
     }
     
     static var inputFileHelp: String {
-      "The path to a file containing the text prompt to create generations for. Provide either this or --prompt, not both."
+      "The path to a file containing the text prompt to create generations for. Provide either this or --\(Self.inputValueOptionName), not both."
     }
 
     static var optional: Bool { true }
@@ -164,6 +164,9 @@ struct AudioTranslationsCommand: AsyncParsableCommand {
 
   @Option(help: "The sampling temperature, between `0` and `1`. Higher values like `0.8` will make the output more random, while lower values like `0.2` will make it more focused and deterministic. If set to `0`, the model will use log probability to automatically increase the temperature until certain thresholds are hit.")
   public var temperature: Percentage?
+  
+  @Option(help: "The 2-3 character language code to translate into. (default: \"en\")")
+  var language: Language?
 
   @Option(help: "The file to save the transcript to. If not provided, the transcript will be printed to the console.")
   var outputFile: String?
@@ -204,10 +207,11 @@ struct AudioTranslationsCommand: AsyncParsableCommand {
     let result = try await client.call(Audio.Translations(
       file: audioData,
       fileName: audioUrl.lastPathComponent,
-      model: model,
+      model: model.findModelId(),
       prompt: prompt,
       responseFormat: responseFormat,
-      temperature: temperature
+      temperature: temperature,
+      language: language
     ))
     
     if let outputFile {
@@ -223,6 +227,16 @@ struct AudioTranslationsCommand: AsyncParsableCommand {
       format.print(subtitle: "Result")
       format.println()
       format.print(text: try result.textValue())
+    }
+  }
+}
+
+enum AudioModel: String, ModelAlias {
+  case whisper
+  
+  var modelId: Model.ID {
+    switch self {
+    case .whisper: return .whisper_1
     }
   }
 }
