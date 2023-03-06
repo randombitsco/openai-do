@@ -16,16 +16,25 @@ struct EmbeddingsCommand: AsyncParsableCommand {
 
 // MARK: create
 
+enum EmbeddingsModel: String, ModelAlias {
+  /// The `text-embedding-ada-002` model.
+  case ada_v2 = "ada-v2"
+  
+  var modelId: OpenAIBits.Model.ID {
+    switch self {
+    case .ada_v2: return .text_embedding_ada_002
+    }
+  }
+}
+
 struct EmbeddingsCreateCommand: AsyncParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "create",
     abstract: "Creates an embedding vector representing the input text, saving the results into a JSON file."
   )
   
-  @Option(help: """
-  The model ID to use creating the embeddings. Should be a 'text-similarity', 'text-search', or 'code-search' model.
-  """)
-  var modelId: Model.ID
+  @OptionGroup
+  var model: ModelOptions<EmbeddingsModel>
   
   struct Help: InputHelp {
     static var inputValueHelp: String {
@@ -63,7 +72,7 @@ struct EmbeddingsCreateCommand: AsyncParsableCommand {
     let format = format.new()
 
     let result = try await client.call(Embeddings.Create(
-      model: modelId, 
+      model: model.findModelId(), 
       input: .string(try input.getValue()),
       user: user
     ))
