@@ -11,3 +11,4 @@ DerivedData/
 # Skip underscored test cases, to allow local testing.
 Tests/OpenAIDoTests/_*.swift
 images/
+temp/

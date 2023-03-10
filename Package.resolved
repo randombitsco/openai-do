@@ -51,7 +51,7 @@
       "location" : "/Users/david/Development/Projects/randombitsco/swift-openai-bits",
       "state" : {
         "branch" : "main",
-        "revision" : "6a4a1563f315378c04312c17b2474ed202d5e8ab"
+        "revision" : "6644a869f3bdc8b6edc295d727b63de91823f390"
       }
     },
     {
@@ -70,6 +70,15 @@
       "state" : {
         "revision" : "62041e6016a30f56952f5d7d3f12a3fd7029e1cd",
         "version" : "0.8.3"
+      }
+    },
+    {
+      "identity" : "yams",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jpsim/Yams.git",
+      "state" : {
+        "revision" : "f47ba4838c30dbd59998a4e4c87ab620ff959e8a",
+        "version" : "5.0.5"
       }
     }
   ],

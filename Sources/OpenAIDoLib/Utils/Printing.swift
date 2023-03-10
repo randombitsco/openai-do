@@ -303,6 +303,22 @@ struct Format {
 
     print(usage: completion.usage)
   }
+  
+  func print(chatCompletion: ChatCompletion) {
+    print(label: "ID", value: chatCompletion.id, verbose: true)
+    print(label: "Created", value: chatCompletion.created, verbose: true)
+    print(label: "Model", value: chatCompletion.model)
+
+    if chatCompletion.choices.count == 1,
+       let choice = chatCompletion.choices.first {
+      print(choice: choice)
+    } else {
+      print(section: "Choices")
+      print(list: chatCompletion.choices, with: Format.print(choice:))
+    }
+
+    print(usage: chatCompletion.usage)
+  }
 
   func print(choice: Completion.Choice) {
     print(section: "Text")
@@ -314,6 +330,15 @@ struct Format {
       print(logprobs: logprobs)
     }
   }
+  
+  func print(choice: ChatCompletion.Choice) {
+    print(section: "Message")
+    print(label: "Role", value: choice.message.role)
+    print(section: "Content")
+    print(textBlock: choice.message.content)
+    print(label: "Finish Reason", value: choice.finishReason)
+  }
+
   
   func print(edit: Edit) {
     print(label: "Created", value: edit.created, verbose: true)
