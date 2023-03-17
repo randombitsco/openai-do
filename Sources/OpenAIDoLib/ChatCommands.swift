@@ -24,11 +24,13 @@ struct ChatCompletionsCommand: AsyncParsableCommand {
   )
   
   enum ChatModel: String, ModelAlias {
-    case turbo
+    case turbo = "turbo"
+    case gpt4 = "gpt-4"
     
     var modelId: Model.ID {
       switch self {
       case .turbo: return "gpt-3.5-turbo"
+      case .gpt4: return "gpt-4"
       }
     }    
   }
@@ -98,35 +100,28 @@ struct ChatCompletionsCommand: AsyncParsableCommand {
   var messagesFormat: MessagesFormat = .yaml
   
   @Option(help: """
-  The maximum number of tokens to generate in the completion. (Defaults to 16)
-  
-  The token count of your prompt plus `max-tokens` cannot exceed the model's context length. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
+  The maximum number of tokens to generate in the chat completion. The total length of input tokens and generated tokens is limited by the model's context length. (default: infinite)
+
   """)
   var maxTokens: Int?
   
   @Option(help: """
-  What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer.  (Defaults to 1)
-  
-  We generally recommend altering this or --top-p but not both.
+  What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer. Generally, alter this or --top-p but not both. (default: 1)
   """)
   var temperature: Percentage?
   
   @Option(name: .customLong("top-p"), help: """
-  An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top-p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. (Defaults to 1)
-  
-  We generally recommend altering this or --temperature but not both.
+  An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top-p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. Generally, alter this or --temperature but not both. (default: 1)
   """)
   var topP: Percentage?
   
   @Option(name: .short, help: """
-  How many completions to generate for each prompt. (Defaults to 1)
-          
-  Note: Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for --max-tokens and stop.
+  How many completions to generate for each prompt. Note: Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for --max-tokens and stop. (default: 1)
   """)
   var n: Int?
 
 // TODO: Add support for streaming responses
-//  @Option(help: "Whether to stream back partial progress. If set, tokens will be sent as data-only server-sent events as they become available, with the stream terminated by a 'data: [DONE]' message. (Defaults to false)")
+//  @Option(help: "Whether to stream back partial progress. If set, tokens will be sent as data-only server-sent events as they become available, with the stream terminated by a 'data: [DONE]' message. (default: false)")
 //  var stream: Bool?
     
   @Option(help: """
@@ -135,11 +130,11 @@ struct ChatCompletionsCommand: AsyncParsableCommand {
   var stop: Stop?
   
   @Option(parsing: .unconditional, help: """
-  Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. (Defaults to 0)
+  Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. (default: 0)
   """)
   var presencePenalty: Penalty?
 
-  @Option(parsing: .unconditional, help: "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. (Defaults to 0)")
+  @Option(parsing: .unconditional, help: "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. (default: 0)")
   var frequencyPenalty: Penalty?
   
   @Option(help: """

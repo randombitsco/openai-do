@@ -47,7 +47,7 @@ struct TextCompletionsCommand: AsyncParsableCommand {
   struct Help: InputHelp {
     static var inputValueHelp: String {
         """
-        The input prompt to generate completions for. (Defaults to '<|endoftext|>')
+        The input prompt to generate completions for. (default: '<|endoftext|>')
 
         Note that '<|endoftext|>' is the document separator that the model sees during training, so if a prompt is not specified the model will generate as if from the beginning of a new document.
         """
@@ -69,45 +69,35 @@ struct TextCompletionsCommand: AsyncParsableCommand {
   var suffix: String?
   
   @Option(help: """
-  The maximum number of tokens to generate in the completion. (Defaults to 16)
-  
-  The token count of your prompt plus `max-tokens` cannot exceed the model's context length. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
+  The maximum number of tokens to generate in the completion. The token count of your prompt plus `max-tokens` cannot exceed the model's context length. Most models have a context length of 2048 tokens (except for the newest models, which support 4096). (default: 16)
   """)
   var maxTokens: Int?
   
   @Option(help: """
-  What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer.  (Defaults to 1)
-  
-  We generally recommend altering this or --top-p but not both.
+  What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer. Generally, alter this or --top-p but not both. (default: 1)
   """)
   var temperature: Percentage?
   
   @Option(name: .customLong("top-p"), help: """
-  An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top-p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. (Defaults to 1)
-  
-  We generally recommend altering this or --temperature but not both.
+  An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top-p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. We generally recommend altering this or --temperature but not both. (default: 1)
   """)
   var topP: Percentage?
   
   @Option(name: .short, help: """
-  How many completions to generate for each prompt. (Defaults to 1)
-          
-  Note: Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for --max-tokens and stop.
+  How many completions to generate for each prompt. Note: Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for --max-tokens and stop. (default: 1)
   """)
   var n: Int?
 
 // TODO: Add support for streaming responses
-//  @Option(help: "Whether to stream back partial progress. If set, tokens will be sent as data-only server-sent events as they become available, with the stream terminated by a 'data: [DONE]' message. (Defaults to false)")
+//  @Option(help: "Whether to stream back partial progress. If set, tokens will be sent as data-only server-sent events as they become available, with the stream terminated by a 'data: [DONE]' message. (default: false)")
 //  var stream: Bool?
   
   @Option(help: """
-  Include the log probabilities on the `logprobs` most likely tokens, as well the chosen tokens. For example, if `logprobs` is 5, the API will return a list of the 5 most likely tokens. The API will always return the `logprob` of the sampled token, so there may be up to `logprobs+1` elements in the response. (Defaults to nothing)
-  
-  The maximum value for `logprobs` is 5.
+  Include the log probabilities on the `logprobs` most likely tokens, as well the chosen tokens. For example, if `logprobs` is 5, the API will return a list of the 5 most likely tokens. The API will always return the `logprob` of the sampled token, so there may be up to `logprobs+1` elements in the response. The maximum value for `logprobs` is 5. (default: nothing)
   """)
   var logprobs: Int?
   
-  @Flag(help: "Echo back the prompt in addition to the completion. (Defaults to false)")
+  @Flag(help: "Echo back the prompt in addition to the completion. (default: false)")
   var echo: Bool = false
   
   @Option(help: """
@@ -116,19 +106,20 @@ struct TextCompletionsCommand: AsyncParsableCommand {
   var stop: Stop?
   
   @Option(parsing: .unconditional, help: """
-  Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. (Defaults to 0)
+  Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. (default: 0)
   """)
   var presencePenalty: Penalty?
 
-  @Option(parsing: .unconditional, help: "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. (Defaults to 0)")
+  @Option(parsing: .unconditional, help: "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. (default: 0)")
   var frequencyPenalty: Penalty?
   
   @Option(help: """
-  Generates the specified number of completions server-side and returns the "best" (the one with the highest log probability per token). Results cannot be streamed. (Defaults to 1)
+  Generates the specified number of completions server-side and returns the "best" (the one with the highest log probability per token). Results cannot be streamed.
   
   When used with -n, best-of controls the number of candidate completions and -n specifies how many to return – best-of must be greater than -n.
   
   Note: Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for --max-tokens and --stop.
+  (default: 1)
   """)
   var bestOf: Int?
   
@@ -232,7 +223,7 @@ struct TextEditsCommand: AsyncParsableCommand {
   
   struct Help: InputHelp {
     static var inputValueHelp: String {
-      "The input text to use as a starting point for the edit. (Defaults to '')"
+      "The input text to use as a starting point for the edit. (default: '')"
     }
     
     static var inputFileHelp: String {
@@ -248,12 +239,12 @@ struct TextEditsCommand: AsyncParsableCommand {
   var instruction: String
   
   @Option(name: .short, help: """
-  How many edits to generate for the input and instruction. (Defaults to 1)
+  How many edits to generate for the input and instruction. (default: 1)
   """)
   var n: Int?
   
   @Option(help: """
-  What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer. (Defaults to 1)
+  What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer. (default: 1)
   
   We generally recommend altering this or --top-p but not both.
   """)
@@ -262,7 +253,7 @@ struct TextEditsCommand: AsyncParsableCommand {
   @Option(name: .customLong("top-p"), help: """
   An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top-p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
   
-  We generally recommend altering this or --temperature but not both. (Defaults to 1)
+  We generally recommend altering this or --temperature but not both. (default: 1)
   """)
   var topP: Percentage?
   

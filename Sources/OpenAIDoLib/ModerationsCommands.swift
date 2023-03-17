@@ -34,7 +34,7 @@ struct ModerationsCreateCommand: AsyncParsableCommand {
   
   @OptionGroup var input: InputOptions<Help>
   
-  @Flag(help: "Specify either the \"latest\" or \"stable\" classifier model, which updates less frequently. Accuracy may be slightly lower than \"latest\". Defaults to \"latest\".")
+  @Flag(help: "Specify either the `latest` or `stable` classifier model, which updates less frequently. Accuracy may be slightly lower than `latest`. (default: latest)")
   var model: Moderations.Model?
   
   @OptionGroup var client: ClientOptions

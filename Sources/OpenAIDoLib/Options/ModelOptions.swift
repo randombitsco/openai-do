@@ -2,7 +2,7 @@ import ArgumentParser
 import OpenAIBits
 
 /// A utility protocol to allow providing aliases for common model IDs while still allowing specific IDs to be provided. Works in concert with the ``ModelOptions``.
-protocol ModelAlias: RawRepresentable, CaseIterable, ExpressibleByArgument where RawValue == String {
+protocol ModelAlias: RawRepresentable, CaseIterable, ExpressibleByArgument, CustomStringConvertible where RawValue == String {
   var modelId: Model.ID { get }
   
   /// Provides help text for the `ModelConfig.model` this is used in.
@@ -50,6 +50,11 @@ extension ModelAlias {
     result += "."
     return result
   }
+
+  var description: String {
+    return rawValue
+  }
+
 }
 
 /// Provides support for having common aliases for `Model.ID` values which can be specified

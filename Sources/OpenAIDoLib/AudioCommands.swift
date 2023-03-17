@@ -165,7 +165,7 @@ struct AudioTranslationsCommand: AsyncParsableCommand {
   @Option(help: "The sampling temperature, between `0` and `1`. Higher values like `0.8` will make the output more random, while lower values like `0.2` will make it more focused and deterministic. If set to `0`, the model will use log probability to automatically increase the temperature until certain thresholds are hit.")
   public var temperature: Percentage?
   
-  @Option(help: "The 2-3 character language code to translate into. (default: \"en\")")
+  @Option(help: "The 2-3 character language code to translate into. (default: en)")
   var language: Language?
 
   @Option(help: "The file to save the transcript to. If not provided, the transcript will be printed to the console.")
