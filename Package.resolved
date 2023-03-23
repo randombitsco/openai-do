@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "revision" : "f623901b4bcc97f59c36704f81583f169b228e51",
-        "version" : "0.13.0"
+        "revision" : "870133b7b2387df136ad301ec67b2e864b51dda1",
+        "version" : "0.14.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-custom-dump",
       "state" : {
-        "revision" : "dd86159e25c749873f144577e5d18309bf57534f",
-        "version" : "0.8.0"
+        "revision" : "de8ba65649e7ee317b9daf27dd5eebf34bd4be57",
+        "version" : "0.9.1"
       }
     },
     {
@@ -51,7 +51,7 @@
       "location" : "/Users/david/Development/Projects/randombitsco/swift-openai-bits",
       "state" : {
         "branch" : "main",
-        "revision" : "6644a869f3bdc8b6edc295d727b63de91823f390"
+        "revision" : "6cb9148e5c4b1500d19623f6eace76345f6ecf55"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "62041e6016a30f56952f5d7d3f12a3fd7029e1cd",
-        "version" : "0.8.3"
+        "revision" : "ab8c9f45843694dd16be4297e6d44c0634fd9913",
+        "version" : "0.8.4"
       }
     },
     {
