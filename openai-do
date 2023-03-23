@@ -1,4 +1,4 @@
 #!/bin/sh
 # This script is used to run the OpenAI Do agent.
 
-swift run -c release openai-do "$@"
+swift run openai-do "$@"
